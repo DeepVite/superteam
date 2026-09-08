@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "superteam",
+  "description": "TJ's personal coding-agent plugin marketplace — PM, design, thinking, dev, media, and utility skills",
+  "version": "1.0.0",
+  "owner": {
+    "name": "TJ"
+  },
+  "plugins": [
+    {
+      "name": "superteam-pack",
+      "source": "./plugins/superteam-pack",
+      "description": "TJ's personal toolkit: product management, design, thinking, development, media creation, and utility skills — all in one plugin.",
+      "version": "1.0.0",
+      "author": {
+        "name": "TJ"
+      },
+      "keywords": [
+        "productivity",
+        "product-management",
+        "design",
+        "thinking",
+        "development",
+        "media-creation",
+        "tools"
+      ]
+    },
+    {
+      "name": "mattpocock-skills",
+      "source": "./plugins/mattpocock-skills",
+      "description": "Matt Pocock's agent skills for real engineering — grilling, spec/ticket flows, TDD, code review, domain modelling and more. Plug-and-play, not vibe coding.",
+      "version": "1.2.0",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "homepage": "https://www.aihero.dev/s/skills-newsletter",
+      "repository": "https://github.com/mattpocock/skills",
+      "license": "MIT",
+      "keywords": [
+        "engineering",
+        "skills",
+        "tdd",
+        "code-review",
+        "grilling",
+        "domain-modeling",
+        "productivity"
+      ]
+    }
+  ]
+}

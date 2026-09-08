@@ -7,6 +7,7 @@
 !/.gitignore
 !/README.md
 !/README.en.md
+# 注：README.full.md（全量技能清单，本地自用）由上面的 /* 默认忽略，不发布。
 
 # 放行链: plugins / superteam-pack / skills
 !/plugins
@@ -34,6 +35,24 @@
 !/plugins/superteam-pack/skills/dev-kit/front
 /plugins/superteam-pack/skills/dev-kit/front/*
 !/plugins/superteam-pack/skills/dev-kit/front/beautiful-tooltip
+
+# 放行市场定义与插件 manifest（多 Agent 插件市场发布）
+!/.claude-plugin
+/.claude-plugin/*
+!/.claude-plugin/marketplace.json
+!/.agents
+/.agents/*
+!/.agents/plugins
+/.agents/plugins/*
+!/.agents/plugins/marketplace.json
+!/plugins/superteam-pack/.claude-plugin
+/plugins/superteam-pack/.claude-plugin/*
+!/plugins/superteam-pack/.claude-plugin/plugin.json
+!/plugins/mattpocock-skills
+/plugins/mattpocock-skills/*
+!/plugins/mattpocock-skills/.claude-plugin
+/plugins/mattpocock-skills/.claude-plugin/*
+!/plugins/mattpocock-skills/.claude-plugin/plugin.json
 
 # 已放行目录内的通用杂物
 **/__pycache__/
