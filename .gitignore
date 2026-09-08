@@ -48,11 +48,17 @@
 !/plugins/superteam-pack/.claude-plugin
 /plugins/superteam-pack/.claude-plugin/*
 !/plugins/superteam-pack/.claude-plugin/plugin.json
+!/plugins/superteam-pack/.codex-plugin
+/plugins/superteam-pack/.codex-plugin/*
+!/plugins/superteam-pack/.codex-plugin/plugin.json
 !/plugins/mattpocock-skills
 /plugins/mattpocock-skills/*
 !/plugins/mattpocock-skills/.claude-plugin
 /plugins/mattpocock-skills/.claude-plugin/*
 !/plugins/mattpocock-skills/.claude-plugin/plugin.json
+!/plugins/mattpocock-skills/.codex-plugin
+/plugins/mattpocock-skills/.codex-plugin/*
+!/plugins/mattpocock-skills/.codex-plugin/plugin.json
 
 # 已放行目录内的通用杂物
 **/__pycache__/
