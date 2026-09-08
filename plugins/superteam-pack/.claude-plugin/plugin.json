@@ -20,6 +20,8 @@
     "./skills/create-session-memory",
     "./skills/dev-kit/backend/excel-export",
     "./skills/dev-kit/front/beautiful-tooltip",
+    "./skills/git-tools/cnb-cli-install",
+    "./skills/git-tools/github-cli",
     "./skills/git-tools/github-cli-install",
     "./skills/git-tools/using-git-worktrees",
     "./skills/init-agent-or-claude-md-rules",
