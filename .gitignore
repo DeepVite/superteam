@@ -5,6 +5,8 @@
 
 /*
 !/.gitignore
+!/README.md
+!/README.en.md
 
 # 放行链: plugins / superteam-pack / skills
 !/plugins
