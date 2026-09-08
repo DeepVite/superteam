@@ -20,10 +20,8 @@
 !/plugins/superteam-pack/skills/git-tools
 !/plugins/superteam-pack/skills/init-agent-or-claude-md-rules
 
-# 放行的技能（tencent-ecosystem-kit 下，仅放行 tapd-cli-install）
+# 放行的技能（tencent-ecosystem-kit 整包）
 !/plugins/superteam-pack/skills/tencent-ecosystem-kit
-/plugins/superteam-pack/skills/tencent-ecosystem-kit/*
-!/plugins/superteam-pack/skills/tencent-ecosystem-kit/tapd-cli-install
 
 # 放行的技能（dev-kit 下，需再破一层）
 !/plugins/superteam-pack/skills/dev-kit
