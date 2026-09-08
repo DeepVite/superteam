@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="orange" data-mode="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tooltip · 浅色卡片（22 种生产级文案）</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  /* ================= 主题令牌：浅色为默认 ================= */
+  :root {
+    --page: #eef1f7;
+    --card: #ffffff;
+    --fg: #1b2333;
+    --muted: #6b7690;
+    --line: rgba(20, 28, 45, .1);
+    --soft: #f2f5fb;
+    --soft-2: #eef1fa;
+    --shadow: 0 10px 26px rgba(20, 28, 45, .13), 0 2px 6px rgba(20, 28, 45, .06);
+    --kbd-bg: #eef1f8;
+    --kbd-bd: #d9dfec;
+    --danger: #dc2626;
+    --danger-soft: #fee2e2;
+    /* 危险按钮的填充色：两种模式都保持深红，避免深色下变浅鲑红、白字看不清 */
+    --danger-solid: #dc2626;
+    --ok: #16a34a;
+    --warn: #d97706;
+    color-scheme: light;
+  }
+
+  /* ================= 深色令牌（两处同步，勿只改一处） ================= */
+  @media (prefers-color-scheme: dark) {
+    html:not([data-mode="light"]) {
+      --page: #101012;
+      --card: #1c1c1f;
+      --fg: #e8e8ea;
+      --muted: #96969c;
+      --line: rgba(255, 255, 255, .1);
+      --soft: rgba(255, 255, 255, .06);
+      --soft-2: rgba(255, 255, 255, .1);
+      --shadow: 0 14px 34px rgba(0, 0, 0, .5), 0 2px 8px rgba(0, 0, 0, .35);
+      --kbd-bg: #26262a;
+      --kbd-bd: #3a3a40;
+      --danger: #f87171;
+      --danger-soft: rgba(248, 113, 113, .15);
+      --ok: #4ade80;
+      --warn: #fbbf24;
+      color-scheme: dark;
+    }
+  }
+  html[data-mode="dark"] {
+    --page: #101012;
+    --card: #1c1c1f;
+    --fg: #e8e8ea;
+    --muted: #96969c;
+    --line: rgba(255, 255, 255, .1);
+    --soft: rgba(255, 255, 255, .06);
+    --soft-2: rgba(255, 255, 255, .1);
+    --shadow: 0 14px 34px rgba(0, 0, 0, .5), 0 2px 8px rgba(0, 0, 0, .35);
+    --kbd-bg: #26262a;
+    --kbd-bd: #3a3a40;
+    --danger: #f87171;
+    --danger-soft: rgba(248, 113, 113, .15);
+    --ok: #4ade80;
+    --warn: #fbbf24;
+    color-scheme: dark;
+  }
+
+  /* ================= 主题色预设 ================= */
+  html[data-theme="blue"] {
+    --accent: #2563eb; --accent-2: #06b6d4;
+    --accent-soft: rgba(37, 99, 235, .12); --accent-soft-2: rgba(37, 99, 235, .22);
+  }
+  html[data-theme="purple"] {
+    --accent: #7c5cff; --accent-2: #d946ef;
+    --accent-soft: rgba(124, 92, 255, .14); --accent-soft-2: rgba(124, 92, 255, .24);
+  }
+  html[data-theme="green"] {
+    --accent: #059669; --accent-2: #84cc16;
+    --accent-soft: rgba(5, 150, 105, .13); --accent-soft-2: rgba(5, 150, 105, .23);
+  }
+  html[data-theme="orange"] {
+    --accent: #FF8D00; --accent-2: #FFC247;
+    --accent-soft: rgba(255, 141, 0, .14); --accent-soft-2: rgba(255, 141, 0, .26);
+    --accent-ink: #fff;
+  }
+  :root { --accent-ink: #fff; }
+
+  /* ================= 页面骨架 ================= */
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--page); color: var(--fg);
+    font: 14px/1.6 -apple-system, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+    padding: 30px 24px 70px;
+    transition: background-color .25s ease, color .25s ease;
+  }
+
+  .layout {
+    display: grid; grid-template-columns: minmax(0, 1fr) 272px;
+    gap: 26px; align-items: start; max-width: 1420px; margin: 0 auto;
+  }
+
+  .page-head { margin: 0 0 22px; }
+  .page-head h1 { margin: 0 0 6px; font-size: 21px; letter-spacing: -.01em; }
+  .page-head p { margin: 0; color: var(--muted); font-size: 13px; }
+
+  .notes {
+    margin: 0 0 22px; padding: 12px 16px; border-radius: 12px;
+    background: var(--card); border: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.85;
+  }
+  .notes b { color: var(--fg); font-weight: 600; }
+  .notes code {
+    font: 600 11.5px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+    background: var(--soft-2); padding: 2px 5px; border-radius: 4px;
+  }
+
+  /* ================= 画廊 ================= */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(318px, 1fr));
+    gap: 22px;
+  }
+  .item {
+    display: flex; flex-direction: column; justify-content: flex-end;
+    gap: 13px; height: 100%;
+    transition: transform .15s ease;
+  }
+  .item:hover { transform: translateY(-3px); }
+  .item__chip {
+    align-self: center; white-space: nowrap;
+    font-size: 11.5px; color: var(--muted);
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 4px 13px;
+  }
+  .item__chip b {
+    font: 600 11px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+    color: var(--accent); margin-right: 5px;
+  }
+
+  /* ================= Tooltip 本体（浅色卡片） ================= */
+  /* 宽度两大类：
+     ① 固定宽度（默认，绝大多数情况）—— 可交互内容一律用这类，按钮/操作区不随文案长短抖动
+     ② 自适应（.tip--fit）—— 只有纯文字的功能提示用，在 min/max 之间按内容伸缩 */
+  .tip {
+    position: relative;
+    width: 300px; max-width: 100%;
+    margin: 0 auto;
+    background: var(--card); color: var(--fg);
+    padding: 14px 16px; border-radius: 14px;
+    box-shadow: var(--shadow);
+    font-size: 12.5px; line-height: 1.6;
+    transition: background-color .25s ease, color .25s ease, box-shadow .25s ease;
+  }
+  .tip--fit {
+    width: fit-content; min-width: 160px; max-width: 300px;
+  }
+  /* 单行短文本居中：内容比最小宽度还短时，左对齐会在右侧留出难看的空白 */
+  .tip--center { text-align: center; }
+  .tip::after {
+    content: ""; position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent; border-top-color: var(--card);
+  }
+
+  /* ---------- 箭头位置：4 条边 × 每边 3 个位置 ---------- */
+  /* 下边（箭头朝下，默认） */
+  .a-bottom-start::after  { top: 100%; left: 14px;  transform: none; border-top-color: var(--card); }
+  .a-bottom-center::after { top: 100%; left: 50%;  transform: translateX(-50%); border-top-color: var(--card); }
+  .a-bottom-end::after    { top: 100%; left: auto; right: 14px; transform: none; border-top-color: var(--card); }
+  /* 上边（箭头朝上） */
+  .a-top-start::after  { top: auto; bottom: 100%; left: 14px;  transform: none;
+                         border-top-color: transparent; border-bottom-color: var(--card); }
+  .a-top-center::after { top: auto; bottom: 100%; left: 50%; transform: translateX(-50%);
+                         border-top-color: transparent; border-bottom-color: var(--card); }
+  .a-top-end::after    { top: auto; bottom: 100%; left: auto; right: 14px; transform: none;
+                         border-top-color: transparent; border-bottom-color: var(--card); }
+  /* 左边（箭头朝左） */
+  .a-left-start::after  { top: 14px; left: auto; right: 100%; transform: none;
+                          border-top-color: transparent; border-right-color: var(--card); }
+  .a-left-center::after { top: 50%; left: auto; right: 100%; transform: translateY(-50%);
+                          border-top-color: transparent; border-right-color: var(--card); }
+  .a-left-end::after    { top: auto; bottom: 14px; left: auto; right: 100%; transform: none;
+                          border-top-color: transparent; border-right-color: var(--card); }
+  /* 右边（箭头朝右） */
+  .a-right-start::after  { top: 14px; left: 100%; right: auto; transform: none;
+                           border-top-color: transparent; border-left-color: var(--card); }
+  .a-right-center::after { top: 50%; left: 100%; right: auto; transform: translateY(-50%);
+                           border-top-color: transparent; border-left-color: var(--card); }
+  .a-right-end::after    { top: auto; bottom: 14px; left: 100%; right: auto; transform: none;
+                           border-top-color: transparent; border-left-color: var(--card); }
+
+  .tip--menu { padding: 8px; }
+
+  /* ================= 内容积木 ================= */
+  .c-title { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .c-text { margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--muted); }
+  .c-text b { color: var(--fg); }
+  .c-head { display: flex; align-items: center; font-weight: 600; font-size: 13px; }
+  .c-head + .c-text { margin-top: 5px; }
+  .c-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex: none; margin-right: 7px;
+    background: var(--ok); box-shadow: 0 0 0 3px rgba(34, 197, 94, .18);
+  }
+  .c-row { display: flex; align-items: flex-start; gap: 11px; }
+  .c-row-between { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .c-row-between .c-title { margin-bottom: 0; }
+  .c-icon {
+    width: 34px; height: 34px; flex: none; border-radius: 9px;
+    display: grid; place-items: center;
+    background: var(--accent-soft); color: var(--accent);
+  }
+  .c-icon svg { width: 17px; height: 17px; }
+  .c-chips { display: flex; flex-wrap: wrap; gap: 5px; margin: 12px 0; }
+  .c-chips span {
+    font-size: 10.5px; padding: 3px 8px; border-radius: 999px;
+    background: var(--soft); color: var(--muted);
+  }
+  .c-actions { display: flex; gap: 7px; margin-top: 12px; }
+  .c-actions button {
+    flex: 1; font-family: inherit; font-size: 11.5px; padding: 8px; cursor: pointer;
+    border-radius: 8px; border: 1px solid var(--line);
+    background: transparent; color: var(--fg);
+    white-space: nowrap;
+  }
+  .c-actions button.primary {
+    background: var(--accent); border-color: var(--accent); color: var(--accent-ink);
+  }
+  .c-actions button.danger {
+    background: var(--danger-solid); border-color: var(--danger-solid); color: #fff;
+  }
+  .c-actions button:hover { filter: brightness(.96); }
+
+  .c-alert { display: flex; align-items: flex-start; gap: 11px; }
+  .c-alert__icon {
+    width: 32px; height: 32px; flex: none; border-radius: 9px;
+    display: grid; place-items: center;
+    background: var(--danger-soft); color: var(--danger);
+  }
+  .c-alert__icon svg { width: 17px; height: 17px; }
+
+  .c-label { display: block; font-size: 11px; color: var(--muted); }
+  .c-metric { font-size: 25px; font-weight: 600; line-height: 1.15; margin: 2px 0 11px; }
+  .c-metric .c-unit { font-size: 12px; font-weight: 400; color: var(--muted); margin-left: 4px; }
+  .c-up { font-size: 11.5px; font-weight: 600; color: var(--ok); margin-left: 5px; }
+  .c-bars { display: flex; align-items: flex-end; gap: 5px; height: 42px; min-width: 190px; }
+  .c-bars i {
+    flex: 1; display: block; border-radius: 3px 3px 2px 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    opacity: .85;
+  }
+  .c-bars i:last-child { opacity: 1; }
+  .c-hint { margin: 8px 0 0; font-size: 11px; color: var(--muted); }
+  .c-hint:first-child { margin-top: 0; }
+
+  .c-progress {
+    height: 6px; border-radius: 99px; background: var(--soft-2); overflow: hidden;
+    min-width: 190px;
+  }
+  .c-progress i {
+    display: block; height: 100%; border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  }
+
+  .c-keys { list-style: none; margin: 11px 0 0; padding: 0; display: grid; gap: 8px; }
+  .c-keys li {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; font-size: 12px; color: var(--muted);
+  }
+  .c-keys .k { display: flex; gap: 4px; flex: none; }
+  kbd {
+    font: 600 10.5px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+    padding: 4px 5px; border-radius: 5px;
+    background: var(--kbd-bg); border: 1px solid var(--kbd-bd);
+    border-bottom-width: 2px; color: var(--fg);
+  }
+
+  .c-user { display: flex; align-items: center; gap: 10px; }
+  .c-avatar {
+    width: 38px; height: 38px; flex: none; border-radius: 50%;
+    display: grid; place-items: center; font-weight: 600; font-size: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
+  }
+  .c-user b { display: block; font-size: 13px; }
+  .c-sub { font-size: 11px; color: var(--muted); }
+  .c-user + .c-text { margin-top: 10px; }
+  .c-stats { display: flex; gap: 7px; margin: 12px 0 0; }
+  .c-stats > div {
+    flex: 1; text-align: center; padding: 7px 5px;
+    border-radius: 9px; background: var(--soft);
+  }
+  .c-stats b { display: block; font-size: 13.5px; }
+  .c-stats span { font-size: 10.5px; color: var(--muted); }
+
+  .c-stack { display: flex; margin: 11px 0 2px; }
+  .c-stack .c-avatar {
+    width: 28px; height: 28px; font-size: 11px;
+    margin-left: -8px; border: 2px solid var(--card);
+  }
+  .c-stack .c-avatar:first-child { margin-left: 0; }
+  .c-stack .c-avatar.more {
+    background: var(--soft); color: var(--muted); font-size: 10.5px;
+  }
+
+  .c-steps { list-style: none; margin: 11px 0 0; padding: 0; display: grid; gap: 9px; }
+  .c-steps li { display: flex; align-items: flex-start; gap: 9px; font-size: 12px; color: var(--muted); }
+  .c-steps i {
+    flex: none; width: 19px; height: 19px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent);
+    font: 600 10.5px/19px ui-monospace, monospace; text-align: center; font-style: normal;
+  }
+
+  .c-list { list-style: none; margin: 11px 0 0; padding: 0; display: grid; gap: 8px; }
+  .c-list li {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--muted);
+  }
+  .c-list li svg { width: 14px; height: 14px; flex: none; color: var(--accent); }
+  .c-check {
+    flex: none; width: 15px; height: 15px; border-radius: 50%; font-style: normal;
+    background: var(--accent-soft); color: var(--accent);
+    font-size: 9px; line-height: 15px; text-align: center; font-weight: 700;
+  }
+
+  .c-menu { list-style: none; margin: 0; padding: 0; display: grid; }
+  .c-menu li {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 8px; border-radius: 8px; font-size: 12.5px; cursor: pointer;
+  }
+  .c-menu li:hover { background: var(--soft); }
+  .c-menu li .k { font-size: 11px; color: var(--muted); }
+  .c-menu li.danger { color: var(--danger); }
+  .c-menu li.danger .k { color: var(--danger); opacity: .7; }
+
+  .c-badge {
+    display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .06em;
+    padding: 3px 7px; border-radius: 6px;
+    background: var(--accent-soft-2); color: var(--accent);
+  }
+  .c-badge + .c-title { margin-top: 9px; }
+
+  .c-link {
+    display: inline-flex; align-items: center; gap: 4px; margin-top: 11px;
+    font-size: 12px; font-weight: 600; color: var(--accent);
+    text-decoration: none; cursor: pointer;
+  }
+  .c-link:hover { text-decoration: underline; }
+
+  .c-price { display: flex; align-items: baseline; gap: 5px; margin: 4px 0 0; }
+  .c-price b { font-size: 23px; }
+  .c-price span { font-size: 11.5px; color: var(--muted); }
+
+  .c-file { display: flex; align-items: center; gap: 10px; }
+  .c-file__icon {
+    width: 34px; height: 34px; flex: none; border-radius: 9px;
+    display: grid; place-items: center;
+    background: var(--accent-soft); color: var(--accent);
+  }
+  .c-file__icon svg { width: 17px; height: 17px; }
+
+  .c-empty { text-align: center; }
+  .c-empty__icon {
+    width: 38px; height: 38px; margin: 0 auto 9px; border-radius: 12px;
+    display: grid; place-items: center;
+    background: var(--soft); color: var(--muted);
+  }
+  .c-empty__icon svg { width: 19px; height: 19px; }
+  .c-empty .c-title { margin-bottom: 3px; }
+
+  .c-divider { height: 1px; background: var(--line); margin: 12px -16px; }
+
+  /* ================= 演示区块 ================= */
+  .block { margin-top: 34px; }
+  .block__title { margin: 0 0 6px; font-size: 15px; font-weight: 600; }
+  .block__desc { margin: 0 0 18px; font-size: 12.5px; color: var(--muted); line-height: 1.85; }
+  .block__desc code {
+    font: 600 11.5px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+    background: var(--soft-2); padding: 2px 5px; border-radius: 4px;
+  }
+
+  /* 宽度对比：3 个案例 */
+  .case {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    padding: 16px 18px 18px; margin-bottom: 16px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  }
+  .case__head { grid-column: 1 / -1; font-size: 12.5px; font-weight: 600; }
+  .case__head span { font-weight: 400; color: var(--muted); }
+  .case__item { display: flex; flex-direction: column; align-items: center; gap: 11px; }
+  .case__tag {
+    font-size: 11px; padding: 3px 10px; border-radius: 999px;
+    background: var(--soft-2); color: var(--muted);
+  }
+  .case__tag--pick { background: var(--accent-soft-2); color: var(--accent); font-weight: 600; }
+  .case__stack { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+  /* 箭头矩阵 */
+  .arrow-table { display: flex; flex-direction: column; gap: 14px; }
+  .arrow-row { display: flex; align-items: stretch; gap: 14px; }
+  .arrow-row__label {
+    flex: 0 0 54px; display: flex; align-items: center;
+    font-size: 12px; color: var(--muted);
+  }
+  .arrow-col { flex: 1; text-align: center; font-size: 12px; color: var(--muted); }
+  .arrow-cell {
+    flex: 1; min-height: 168px; padding: 18px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px dashed var(--line); border-radius: 14px;
+  }
+  .arrow-cell .tip { margin: 0; }
+
+  /* 锚点 + tooltip 成组，锚点按箭头位置对齐 */
+  .pair { display: flex; gap: 8px; width: fit-content; }
+  .pair--up    { flex-direction: column; }
+  .pair--down  { flex-direction: column-reverse; }
+  .pair--left  { flex-direction: row; }
+  .pair--right { flex-direction: row-reverse; }
+  .pair--up.pair--start    > .anchor,
+  .pair--down.pair--start  > .anchor { align-self: flex-start; margin-left: 15px; }
+  .pair--up.pair--end      > .anchor,
+  .pair--down.pair--end    > .anchor { align-self: flex-end; margin-right: 15px; }
+  .pair--left.pair--start  > .anchor,
+  .pair--right.pair--start > .anchor { align-self: flex-start; margin-top: 15px; }
+  .pair--left.pair--end    > .anchor,
+  .pair--right.pair--end   > .anchor { align-self: flex-end; margin-bottom: 15px; }
+  .pair--center > .anchor { align-self: center; }
+
+  /* 箭头指向的锚点 */
+  .anchor {
+    flex: none; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+
+  /* ================= 调试面板 ================= */
+  .panel {
+    position: sticky; top: 20px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 16px; padding: 16px;
+    box-shadow: var(--shadow);
+    transition: background-color .25s ease, border-color .25s ease;
+  }
+  .panel__title { margin: 0 0 14px; font-size: 13px; font-weight: 600; }
+  .panel__group + .panel__group { margin-top: 16px; }
+  .panel__label {
+    display: block; font-size: 11px; color: var(--muted);
+    letter-spacing: .04em; margin-bottom: 9px;
+  }
+
+  .swatches { display: flex; gap: 6px; }
+  .swatch-item { flex: 1; text-align: center; }
+  .swatch {
+    width: 100%; aspect-ratio: 1; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--sw); display: block; padding: 0;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .swatch:hover { transform: scale(1.08); }
+  .swatch[aria-pressed="true"] {
+    box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--sw);
+  }
+  .swatch-item span {
+    display: block; margin-top: 6px; font-size: 10.5px; color: var(--muted);
+  }
+  .swatch-item span.on { color: var(--fg); font-weight: 600; }
+  .swatch[data-theme="blue"]   { --sw: #2563eb; }
+  .swatch[data-theme="purple"] { --sw: #7c5cff; }
+  .swatch[data-theme="green"]  { --sw: #059669; }
+  .swatch[data-theme="orange"] { --sw: #FF8D00; }
+
+  .seg {
+    display: flex; gap: 2px; padding: 3px;
+    background: var(--soft); border-radius: 10px;
+  }
+  .seg button {
+    flex: 1; border: none; background: transparent; color: var(--muted);
+    font-family: inherit; font-size: 12px; padding: 7px 4px;
+    border-radius: 8px; cursor: pointer;
+  }
+  .seg button.on {
+    background: var(--card); color: var(--fg); font-weight: 600;
+    box-shadow: 0 1px 3px rgba(20, 28, 45, .16);
+  }
+  .panel__hint { margin: 9px 0 0; font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .panel__foot {
+    margin: 16px 0 0; padding-top: 13px; border-top: 1px solid var(--line);
+    font-size: 11px; color: var(--muted); line-height: 1.6;
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .panel { position: static; order: -1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .item, .swatch { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ==================== 主内容 ==================== -->
+  <main>
+    <header class="page-head">
+      <h1>Tooltip · 浅色卡片</h1>
+      <p>02 号风格的 22 种生产级文案 · 显示模式默认浅色 · 主题色可切换</p>
+    </header>
+
+    <div class="notes">
+      <b>深浅色：</b>显示模式默认<b>浅色</b>；切到「自动」跟随系统（Windows「设置 → 个性化 → 颜色」），切到「深色」手动锁定。tooltip 内部（文字、标签、键帽、进度条、警示色）一并切换，深色底为中性灰、不偏蓝。<br />
+      <b>主题色：</b>主色抽成了 <code>--accent</code> 令牌，右侧面板点一下即换（蓝 / 紫 / 绿 / 橙色，蓝色在第一位）。按钮、图标、进度条、头像、序号、链接会一起变；语义色（成功绿、警示红、状态点）不参与换色。<br />
+      <b>宽度：</b>默认固定 300px；只有极短的单行提示用 <code>.tip--fit</code> 自适应（160–300px）。箭头 12 种位置见第二节。<br />
+      <b>看什么：</b>挑的是「内容模板」而不是这一种风格——你选中的模板我会用最终确定的外壳重新实现。
+    </div>
+
+    <!-- ==================== 一、宽度策略 ==================== -->
+    <section class="block">
+      <h2 class="block__title">一、宽度策略 · 3 个案例对比</h2>
+      <p class="block__desc">
+        宽度分两大类：<b>固定宽度</b>（默认，绝大多数情况）与 <b>自适应</b>（<code>.tip--fit</code>：<code>min-width 160px / max-width 300px</code>）。<br />
+        内容也分两大类：<b>极短功能提示</b>（单行、十来个字）→ 自适应；<b>中等及以上文案 + 可交互提示</b>（含按钮/菜单）→ 固定宽度。
+      </p>
+
+      <div class="case">
+        <div class="case__head">案例 1 · 极短功能提示 <span>— 自适应明显更紧凑，固定宽度会显得空</span></div>
+        <div class="case__item">
+          <span class="case__tag case__tag--pick">自适应（推荐）</span>
+          <div class="case__stack">
+            <div class="tip tip--fit tip--center a-bottom-center">复制链接到剪贴板</div>
+            <span class="anchor"></span>
+          </div>
+        </div>
+        <div class="case__item">
+          <span class="case__tag">固定宽度 300px</span>
+          <div class="case__stack">
+            <div class="tip tip--center a-bottom-center">复制链接到剪贴板</div>
+            <span class="anchor"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="case">
+        <div class="case__head">案例 2 · 中等功能提示 <span>— 选固定宽度：宽度统一，多条并排时更整齐</span></div>
+        <div class="case__item">
+          <span class="case__tag">自适应</span>
+          <div class="case__stack">
+            <div class="tip tip--fit a-bottom-center">
+              <span class="c-title">正在同步 62%</span>
+              <p class="c-text">已同步 3,142 / 5,068 个文件</p>
+            </div>
+            <span class="anchor"></span>
+          </div>
+        </div>
+        <div class="case__item">
+          <span class="case__tag case__tag--pick">固定宽度 300px（推荐）</span>
+          <div class="case__stack">
+            <div class="tip a-bottom-center">
+              <span class="c-title">正在同步 62%</span>
+              <p class="c-text">已同步 3,142 / 5,068 个文件</p>
+            </div>
+            <span class="anchor"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="case">
+        <div class="case__head">案例 3 · 可交互提示 <span>— 必须固定宽度，否则按钮区会随文案塌缩、操作位置不稳定</span></div>
+        <div class="case__item">
+          <span class="case__tag case__tag--pick">固定宽度（推荐）</span>
+          <div class="case__stack">
+            <div class="tip a-bottom-center">
+              <span class="c-title">删除后不可恢复</span>
+              <div class="c-actions">
+                <button type="button">取消</button>
+                <button class="danger" type="button">确认删除</button>
+              </div>
+            </div>
+            <span class="anchor"></span>
+          </div>
+        </div>
+        <div class="case__item">
+          <span class="case__tag">自适应（不推荐）</span>
+          <div class="case__stack">
+            <div class="tip tip--fit a-bottom-center">
+              <span class="c-title">删除后不可恢复</span>
+              <div class="c-actions">
+                <button type="button">取消</button>
+                <button class="danger" type="button">确认删除</button>
+              </div>
+            </div>
+            <span class="anchor"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 二、箭头位置 ==================== -->
+    <section class="block">
+      <h2 class="block__title">二、箭头位置 · 4 条边 × 每边 3 个位置</h2>
+      <p class="block__desc">
+        箭头共 12 种位置：上 / 下 / 左 / 右 4 条边，每条边有 <b>起始</b>、<b>居中</b>、<b>末尾</b> 三个位置。虚线框里的小圆点是 tooltip 指向的锚点。<br />
+        类名规则 <code>.a-{边}-{位置}</code>，例如 <code>.a-top-start</code>、<code>.a-left-center</code>、<code>.a-right-end</code>。
+      </p>
+
+      <div class="arrow-table">
+
+        <div class="arrow-row">
+          <span class="arrow-row__label"></span>
+          <span class="arrow-col">起始</span>
+          <span class="arrow-col">居中</span>
+          <span class="arrow-col">末尾</span>
+        </div>
+
+        <div class="arrow-row">
+          <span class="arrow-row__label">上边</span>
+          <div class="arrow-cell">
+            <div class="pair pair--up pair--start">
+              <span class="anchor"></span>
+              <div class="tip tip--fit a-top-start"><span class="c-title">提示标题</span><p class="c-text">说明文字</p></div>
+            </div>
+          </div>
+          <div class="arrow-cell">
+            <div class="pair pair--up pair--center">
+              <span class="anchor"></span>
+              <div class="tip tip--fit a-top-center"><span class="c-title">提示标题</span><p class="c-text">说明文字</p></div>
+            </div>
+          </div>
+          <div class="arrow-cell">
+            <div class="pair pair--up pair--end">
+              <span class="anchor"></span>
+              <div class="tip tip--fit a-top-end"><span class="c-title">提示标题</span><p class="c-text">说明文字</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arrow-row">
+          <span class="arrow-row__label">下边</span>
+          <div class="arrow-cell">
+            <div class="pair pair--down pair--start">
+              <span class="anchor"></span>
+              <div class="tip tip--fit a-bottom-start"><span class="c-title">提示标题</span><p class="c-text">说明文字</p></div>
+            </div>
+          </div>
+          <div class="arrow-cell">
+            <div class="pair pair--down pair--center">
+              <span class="anchor"></span>
+              <div class="tip tip--fit a-bottom-center"><span class="c-title">提示标题</span><p class="c-text">说明文字</p></div>
+            </div>
+          </div>
+          <div class="arrow-cell">
+            <div class="pair pair--down pair--end">
+              <span class="anchor"></span>
+              <div class="tip tip--fit a-bottom-end"><span class="c-title">提示标题</span><p class="c-text">说明文字</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arrow-row">
+          <span class="arrow-row__label">左边</span>
+          <div class="arrow-cell">
+            <div class="pair pair--left pair--start">
+              <span class="anchor"></span>
+              <div class="tip tip--fit a-left-start"><span class="c-title">提示标题</span><p class="c-text">说明文字</p></div>
+            </div>
+          </div>
+          <div class="arrow-cell">
+            <div class="pair pair--left pair--center">
+              <span class="anchor"></span>
+              <div class="tip tip--fit a-left-center"><span class="c-title">提示标题</span><p class="c-text">说明文字</p></div>
+            </div>
+          </div>
+          <div class="arrow-cell">
+            <div class="pair pair--left pair--end">
+              <span class="anchor"></span>
+              <div class="tip tip--fit a-left-end"><span class="c-title">提示标题</span><p class="c-text">说明文字</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arrow-row">
+          <span class="arrow-row__label">右边</span>
+          <div class="arrow-cell">
+            <div class="pair pair--right pair--start">
+              <span class="anchor"></span>
+              <div class="tip tip--fit a-right-start"><span class="c-title">提示标题</span><p class="c-text">说明文字</p></div>
+            </div>
+          </div>
+          <div class="arrow-cell">
+            <div class="pair pair--right pair--center">
+              <span class="anchor"></span>
+              <div class="tip tip--fit a-right-center"><span class="c-title">提示标题</span><p class="c-text">说明文字</p></div>
+            </div>
+          </div>
+          <div class="arrow-cell">
+            <div class="pair pair--right pair--end">
+              <span class="anchor"></span>
+              <div class="tip tip--fit a-right-end"><span class="c-title">提示标题</span><p class="c-text">说明文字</p></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== 三、文案模板 ==================== -->
+    <section class="block">
+      <h2 class="block__title">三、22 种文案模板</h2>
+      <p class="block__desc">
+        按上面的规则标注：只有 01 号极短提示用自适应（<code>.tip--fit</code>），02 号起全部固定宽度。
+      </p>
+
+    <div class="gallery">
+
+      <!-- 01 短句 -->
+      <div class="item">
+        <div class="tip tip--fit tip--center">复制链接到剪贴板</div>
+        <div class="item__chip"><b>01</b>短句</div>
+      </div>
+
+      <!-- 02 功能开关 -->
+      <div class="item">
+        <div class="tip">
+          <span class="c-title">自动保存已开启</span>
+          <p class="c-text">你的编辑内容每 30 秒保存一次，可在「设置 → 存储」中关闭。</p>
+        </div>
+        <div class="item__chip"><b>02</b>功能开关</div>
+      </div>
+
+      <!-- 03 带图标说明 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-row">
+            <span class="c-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3l7 3.5v5c0 4.2-2.9 7.9-7 9.5-4.1-1.6-7-5.3-7-9.5v-5L12 3z"/>
+                <path d="M9.5 12.2l1.8 1.8 3.4-3.6"/>
+              </svg>
+            </span>
+            <div>
+              <span class="c-title">端到端加密</span>
+              <p class="c-text">消息在离开设备前完成加密，服务器无法读取内容，密钥仅保存在你的本机。</p>
+            </div>
+          </div>
+        </div>
+        <div class="item__chip"><b>03</b>带图标说明</div>
+      </div>
+
+      <!-- 04 状态 + 标签 + 操作 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-head"><i class="c-dot"></i>生产环境 · 运行中</div>
+          <p class="c-text">该分支已合并至 main，最近一次部署完成于 2 小时前。</p>
+          <div class="c-chips"><span>v2.4.1</span><span>Node 20</span><span>3 个待审 PR</span></div>
+          <div class="c-actions">
+            <button class="primary" type="button">查看日志</button>
+            <button type="button">重新部署</button>
+          </div>
+        </div>
+        <div class="item__chip"><b>04</b>状态 + 标签 + 操作</div>
+      </div>
+
+      <!-- 05 数据指标 -->
+      <div class="item">
+        <div class="tip">
+          <span class="c-label">近 7 日活跃</span>
+          <div class="c-metric">12,480 <span class="c-up">+18.2%</span></div>
+          <div class="c-bars">
+            <i style="height:38%"></i><i style="height:52%"></i><i style="height:46%"></i>
+            <i style="height:68%"></i><i style="height:60%"></i><i style="height:82%"></i>
+            <i style="height:100%"></i>
+          </div>
+          <p class="c-hint">对比上一周期 10,558</p>
+        </div>
+        <div class="item__chip"><b>05</b>数据指标</div>
+      </div>
+
+      <!-- 06 快捷键 -->
+      <div class="item">
+        <div class="tip">
+          <span class="c-title">常用快捷键</span>
+          <ul class="c-keys">
+            <li><span>保存文件</span><span class="k"><kbd>Ctrl</kbd><kbd>S</kbd></span></li>
+            <li><span>命令面板</span><span class="k"><kbd>Ctrl</kbd><kbd>K</kbd></span></li>
+            <li><span>全局搜索</span><span class="k"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>F</kbd></span></li>
+            <li><span>关闭标签</span><span class="k"><kbd>Ctrl</kbd><kbd>W</kbd></span></li>
+          </ul>
+        </div>
+        <div class="item__chip"><b>06</b>快捷键</div>
+      </div>
+
+      <!-- 07 用户名片 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-user">
+            <span class="c-avatar">林</span>
+            <div><b>林知远</b><span class="c-sub">产品设计师 · 上海</span></div>
+          </div>
+          <p class="c-text">负责编辑器与协作模块，本月完成 3 次版本评审。</p>
+          <div class="c-stats">
+            <div><b>128</b><span>文档</span></div>
+            <div><b>36</b><span>评论</span></div>
+            <div><b>4.9</b><span>评分</span></div>
+          </div>
+          <div class="c-actions">
+            <button class="primary" type="button">关注</button>
+            <button type="button">发消息</button>
+          </div>
+        </div>
+        <div class="item__chip"><b>07</b>用户名片</div>
+      </div>
+
+      <!-- 08 流程步骤 -->
+      <div class="item">
+        <div class="tip">
+          <span class="c-title">发布流程（约 6 分钟）</span>
+          <ol class="c-steps">
+            <li><i>1</i><span>运行测试套件，确认全部通过</span></li>
+            <li><i>2</i><span>自动生成变更日志并核对条目</span></li>
+            <li><i>3</i><span>推送标签，触发构建与灰度发布</span></li>
+          </ol>
+        </div>
+        <div class="item__chip"><b>08</b>流程步骤</div>
+      </div>
+
+      <!-- 09 表单校验错误 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-alert">
+            <span class="c-alert__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.3 4.2a2 2 0 0 1 3.4 0l7.4 12.9a2 2 0 0 1-1.7 3H4.6a2 2 0 0 1-1.7-3L10.3 4.2z"/>
+                <path d="M12 9.5v4"/><path d="M12 16.8h.01"/>
+              </svg>
+            </span>
+            <div>
+              <span class="c-title">邮箱格式不正确</span>
+              <p class="c-text">请输入完整邮箱，例如 name@company.com。也可以改用企业微信扫码登录。</p>
+            </div>
+          </div>
+        </div>
+        <div class="item__chip"><b>09</b>表单校验错误</div>
+      </div>
+
+      <!-- 10 危险操作警告 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-alert">
+            <span class="c-alert__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.3 4.2a2 2 0 0 1 3.4 0l7.4 12.9a2 2 0 0 1-1.7 3H4.6a2 2 0 0 1-1.7-3L10.3 4.2z"/>
+                <path d="M12 9.5v4"/><path d="M12 16.8h.01"/>
+              </svg>
+            </span>
+            <div>
+              <span class="c-title">删除后不可恢复</span>
+              <p class="c-text">该文档及其 12 条评论将被永久删除，协作者会立即失去访问权限。</p>
+            </div>
+          </div>
+          <div class="c-divider"></div>
+          <div class="c-actions">
+            <button type="button">取消</button>
+            <button class="danger" type="button">确认删除</button>
+          </div>
+        </div>
+        <div class="item__chip"><b>10</b>危险操作警告</div>
+      </div>
+
+      <!-- 11 权限说明 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-row">
+            <span class="c-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/>
+                <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>
+              </svg>
+            </span>
+            <div>
+              <span class="c-title">只读权限</span>
+              <p class="c-text">你可以查看和评论，但不能编辑内容。如需编辑权限，请联系空间管理员。</p>
+            </div>
+          </div>
+          <div class="c-chips"><span>查看</span><span>评论</span><span>不可编辑</span></div>
+          <a class="c-link" href="#">申请编辑权限 →</a>
+        </div>
+        <div class="item__chip"><b>11</b>权限说明</div>
+      </div>
+
+      <!-- 12 额度与计费 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-row-between">
+            <span class="c-title">本月剩余额度</span>
+            <span class="c-badge">9.3%</span>
+          </div>
+          <div class="c-metric">1,860 <span class="c-unit">/ 20,000 次</span></div>
+          <div class="c-progress"><i style="width:9.3%"></i></div>
+          <p class="c-hint">超出后按 ¥0.02/次 计费，10 月 1 日重置</p>
+        </div>
+        <div class="item__chip"><b>12</b>额度与计费</div>
+      </div>
+
+      <!-- 13 加载进度 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-row-between">
+            <span class="c-title">正在同步 62%</span>
+            <span class="c-hint">约 1 分 20 秒</span>
+          </div>
+          <div class="c-progress" style="margin-top:10px"><i style="width:62%"></i></div>
+          <p class="c-hint">已同步 3,142 / 5,068 个文件</p>
+        </div>
+        <div class="item__chip"><b>13</b>加载进度</div>
+      </div>
+
+      <!-- 14 错误 + 重试 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-alert">
+            <span class="c-alert__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M15 9l-6 6M9 9l6 6"/>
+              </svg>
+            </span>
+            <div>
+              <span class="c-title">部署失败</span>
+              <p class="c-text">构建在 test:unit 阶段中断，3 个用例未通过。</p>
+            </div>
+          </div>
+          <div class="c-divider"></div>
+          <div class="c-actions">
+            <button type="button">查看日志</button>
+            <button class="primary" type="button">重试部署</button>
+          </div>
+        </div>
+        <div class="item__chip"><b>14</b>错误 + 重试</div>
+      </div>
+
+      <!-- 15 文件信息 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-file">
+            <span class="c-file__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/>
+                <path d="M14 3v5h5"/>
+              </svg>
+            </span>
+            <div>
+              <span class="c-title">季度复盘-2026Q3.pdf</span>
+              <p class="c-text">4.2 MB · PDF · 修改于 2 天前</p>
+            </div>
+          </div>
+          <p class="c-hint">被 3 个页面引用 · 上传者 林知远</p>
+        </div>
+        <div class="item__chip"><b>15</b>文件信息</div>
+      </div>
+
+      <!-- 16 新功能提示 -->
+      <div class="item">
+        <div class="tip">
+          <span class="c-badge">NEW</span>
+          <span class="c-title">支持多光标编辑</span>
+          <p class="c-text">按住 Alt 点击可添加多个光标，v2.5.0 起可用。</p>
+          <a class="c-link" href="#">查看更新日志 →</a>
+        </div>
+        <div class="item__chip"><b>16</b>新功能提示</div>
+      </div>
+
+      <!-- 17 团队成员 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-row-between">
+            <span class="c-title">项目成员</span>
+            <span class="c-hint">3 人在线</span>
+          </div>
+          <div class="c-stack">
+            <span class="c-avatar">林</span>
+            <span class="c-avatar">张</span>
+            <span class="c-avatar">陈</span>
+            <span class="c-avatar more">+5</span>
+          </div>
+          <ul class="c-list">
+            <li><i class="c-dot"></i>林知远 · 正在编辑「发布流程」</li>
+            <li><i class="c-dot"></i>张未 · 正在评论「接口文档」</li>
+          </ul>
+        </div>
+        <div class="item__chip"><b>17</b>团队成员</div>
+      </div>
+
+      <!-- 18 关联引用 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-row-between">
+            <span class="c-title">被 3 处引用</span>
+            <span class="c-badge">引用</span>
+          </div>
+          <ul class="c-list">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/>
+                <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>
+              </svg>
+              产品需求文档 v2
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/>
+                <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>
+              </svg>
+              周会纪要 09-01
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/>
+                <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>
+              </svg>
+              设计规范 · 组件篇
+            </li>
+          </ul>
+          <a class="c-link" href="#">查看全部引用 →</a>
+        </div>
+        <div class="item__chip"><b>18</b>关联引用</div>
+      </div>
+
+      <!-- 19 价格套餐 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-row-between">
+            <span class="c-title">专业版</span>
+            <span class="c-badge">推荐</span>
+          </div>
+          <div class="c-price"><b>¥68</b><span>/ 月 · 每个席位</span></div>
+          <ul class="c-list">
+            <li><i class="c-check">✓</i>无限项目与成员</li>
+            <li><i class="c-check">✓</i>优先技术支持</li>
+            <li><i class="c-check">✓</i>高级权限与审计日志</li>
+          </ul>
+          <div class="c-actions">
+            <button type="button">对比套餐</button>
+            <button class="primary" type="button">升级</button>
+          </div>
+        </div>
+        <div class="item__chip"><b>19</b>价格套餐</div>
+      </div>
+
+      <!-- 20 空状态 -->
+      <div class="item">
+        <div class="tip">
+          <div class="c-empty">
+            <span class="c-empty__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/>
+                <path d="M3 8l9 5 9-5"/><path d="M12 13v8"/>
+              </svg>
+            </span>
+            <span class="c-title">本周还没有新工单</span>
+            <p class="c-text">创建第一个工单后，这里会显示趋势与负责人分布。</p>
+          </div>
+          <div class="c-actions">
+            <button class="primary" type="button">新建工单</button>
+          </div>
+        </div>
+        <div class="item__chip"><b>20</b>空状态</div>
+      </div>
+
+      <!-- 21 富文本 + 链接 -->
+      <div class="item">
+        <div class="tip">
+          <span class="c-title">快捷键冲突已自动处理</span>
+          <p class="c-text">你设置的 <b>Ctrl + K</b> 与系统搜索冲突，已自动改为 <b>Ctrl + Shift + K</b>。</p>
+          <div class="c-divider"></div>
+          <div class="c-row-between">
+            <span class="c-hint">修改于 3 分钟前</span>
+            <a class="c-link" href="#" style="margin-top:0">恢复默认 →</a>
+          </div>
+        </div>
+        <div class="item__chip"><b>21</b>富文本 + 链接</div>
+      </div>
+
+      <!-- 22 快捷操作菜单 -->
+      <div class="item">
+        <div class="tip tip--menu">
+          <ul class="c-menu">
+            <li><span>重命名</span><span class="k">F2</span></li>
+            <li><span>复制链接</span><span class="k">Ctrl C</span></li>
+            <li><span>移动到…</span><span class="k">Ctrl M</span></li>
+            <li class="danger"><span>删除</span><span class="k">Del</span></li>
+          </ul>
+        </div>
+        <div class="item__chip"><b>22</b>快捷操作菜单</div>
+      </div>
+
+    </div>
+    </section>
+  </main>
+
+  <!-- ==================== 调试面板 ==================== -->
+  <aside class="panel">
+    <h2 class="panel__title">调试面板</h2>
+
+    <div class="panel__group">
+      <span class="panel__label">主题色</span>
+      <div class="swatches">
+        <div class="swatch-item">
+          <button class="swatch" type="button" data-theme="blue" aria-pressed="false" aria-label="蓝色"></button>
+          <span>蓝色</span>
+        </div>
+        <div class="swatch-item">
+          <button class="swatch" type="button" data-theme="purple" aria-pressed="false" aria-label="紫色"></button>
+          <span>紫色</span>
+        </div>
+        <div class="swatch-item">
+          <button class="swatch" type="button" data-theme="green" aria-pressed="false" aria-label="绿色"></button>
+          <span>绿色</span>
+        </div>
+        <div class="swatch-item">
+          <button class="swatch" type="button" data-theme="orange" aria-pressed="true" aria-label="橙色"></button>
+          <span class="on">橙色</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel__group">
+      <span class="panel__label">显示模式</span>
+      <div class="seg">
+        <button type="button" data-mode="auto">自动</button>
+        <button type="button" data-mode="light" class="on">浅色</button>
+        <button type="button" data-mode="dark">深色</button>
+      </div>
+      <p class="panel__hint" id="modeHint">当前：跟随系统</p>
+    </div>
+
+    <p class="panel__foot">
+      两个控件刷新后都会回到默认值：主题色「橙色」、显示模式「浅色」。切换只影响当前这一屏。
+    </p>
+  </aside>
+
+</div>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var THEMES = ['blue', 'purple', 'green', 'orange'];
+    var mql = window.matchMedia('(prefers-color-scheme: dark)');
+    var hint = document.getElementById('modeHint');
+    var themeBtns = Array.prototype.slice.call(document.querySelectorAll('.swatch'));
+    var modeBtns = Array.prototype.slice.call(document.querySelectorAll('.seg button'));
+
+    function applyTheme(t) {
+      if (THEMES.indexOf(t) < 0) { t = 'orange'; }
+      root.setAttribute('data-theme', t);
+      themeBtns.forEach(function (b) {
+        var on = b.getAttribute('data-theme') === t;
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        b.nextElementSibling.classList.toggle('on', on);
+      });
+    }
+
+    function applyMode(m) {
+      root.setAttribute('data-mode', m);
+      modeBtns.forEach(function (b) {
+        b.classList.toggle('on', b.getAttribute('data-mode') === m);
+      });
+      updateHint();
+    }
+
+    function updateHint() {
+      var m = root.getAttribute('data-mode');
+      if (m === 'light') { hint.textContent = '当前：浅色（默认）'; }
+      else if (m === 'dark') { hint.textContent = '当前：手动锁定深色'; }
+      else { hint.textContent = '当前：跟随系统（' + (mql.matches ? '深色' : '浅色') + '）'; }
+    }
+
+    /* 两个控件刷新后都回到默认值：主题色「橙色」、显示模式「浅色」 */
+    applyTheme('orange');
+    applyMode('light');
+
+    themeBtns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        applyTheme(b.getAttribute('data-theme'));
+      });
+    });
+
+    modeBtns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        applyMode(b.getAttribute('data-mode'));
+      });
+    });
+
+    if (mql.addEventListener) { mql.addEventListener('change', updateHint); }
+    else if (mql.addListener) { mql.addListener(updateHint); }
+  })();
+</script>
+</body>
+</html>

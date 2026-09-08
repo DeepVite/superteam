@@ -1,0 +1,39 @@
+# ============================================================
+# 白名单模式：默认忽略全部内容，仅发布下方明确放行的技能目录。
+# 注意：git 无法放行"被忽略目录内部"的内容，因此目录链必须逐级放行。
+# ============================================================
+
+/*
+!/.gitignore
+
+# 放行链: plugins / superteam-pack / skills
+!/plugins
+/plugins/*
+!/plugins/superteam-pack
+/plugins/superteam-pack/*
+!/plugins/superteam-pack/skills
+/plugins/superteam-pack/skills/*
+
+# 放行的技能（根目录级）
+!/plugins/superteam-pack/skills/codex-tools
+!/plugins/superteam-pack/skills/create-session-memory
+!/plugins/superteam-pack/skills/git-tools
+!/plugins/superteam-pack/skills/init-agent-or-claude-md-rules
+
+# 放行的技能（dev-kit 下，需再破一层）
+!/plugins/superteam-pack/skills/dev-kit
+/plugins/superteam-pack/skills/dev-kit/*
+!/plugins/superteam-pack/skills/dev-kit/backend
+/plugins/superteam-pack/skills/dev-kit/backend/*
+!/plugins/superteam-pack/skills/dev-kit/backend/excel-export
+!/plugins/superteam-pack/skills/dev-kit/front
+/plugins/superteam-pack/skills/dev-kit/front/*
+!/plugins/superteam-pack/skills/dev-kit/front/beautiful-tooltip
+
+# 已放行目录内的通用杂物
+**/__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+*.log
+*.zip

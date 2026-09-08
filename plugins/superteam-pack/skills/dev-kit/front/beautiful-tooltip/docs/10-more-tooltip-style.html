@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>10 种 Tooltip 风格 × 8 种内容</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --page: #eef1f7;
+    --panel: #ffffff;
+    --text: #1b2333;
+    --muted: #6b7690;
+    --line: rgba(27, 35, 51, .1);
+  }
+  body.dark {
+    --page: #0d1017;
+    --panel: #151a24;
+    --text: #e6eaf3;
+    --muted: #8b95ab;
+    --line: rgba(255, 255, 255, .1);
+  }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--page); color: var(--text);
+    font: 14px/1.6 -apple-system, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+    padding: 30px 24px 70px;
+    transition: background .25s ease, color .25s ease;
+  }
+
+  .wrap { max-width: 100%; }
+
+  /* ---------- 页头 ---------- */
+  .page-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; margin-bottom: 8px;
+  }
+  .page-head h1 { margin: 0 0 6px; font-size: 21px; letter-spacing: -.01em; }
+  .page-head p { margin: 0; color: var(--muted); font-size: 13px; }
+  .theme-btn {
+    border: 1px solid var(--line); background: var(--panel); color: var(--text);
+    padding: 9px 15px; border-radius: 10px; font-size: 13px; cursor: pointer; flex: none;
+    transition: border-color .18s ease;
+  }
+  .theme-btn:hover { border-color: var(--text); }
+
+  .notes {
+    margin: 16px 0 22px; padding: 12px 16px; border-radius: 12px;
+    background: var(--panel); border: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.85;
+  }
+  .notes b { color: var(--text); font-weight: 600; }
+  .notes code {
+    font: 600 11.5px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+    background: rgba(127, 145, 190, .14); padding: 2px 5px; border-radius: 4px;
+  }
+
+  .scroll-hint {
+    font-size: 12px; color: var(--muted); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .scroll-hint::before,
+  .scroll-hint::after { content: ""; height: 1px; background: var(--line); flex: 1; }
+
+  /* ---------- 矩阵 ---------- */
+  .matrix { overflow-x: auto; padding-bottom: 16px; }
+
+  .row {
+    display: flex; align-items: flex-end; gap: 18px;
+    width: max-content; padding: 0 2px 34px;
+  }
+  .row__label {
+    position: sticky; left: 0; z-index: 3; align-self: flex-start;
+    flex: 0 0 158px; background: var(--page);
+    padding: 4px 16px 4px 2px;
+    box-shadow: 12px 0 14px -12px rgba(10, 16, 30, .5);
+  }
+  .row__num {
+    display: inline-block; margin-bottom: 6px; padding: 4px 6px;
+    font: 600 11px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+    color: var(--muted); border: 1px solid var(--line); border-radius: 5px;
+  }
+  .row__name { display: block; font-size: 14px; font-weight: 600; }
+  .row__desc { display: block; margin-top: 3px; font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+
+  .cell {
+    flex: 0 0 300px; width: 300px;
+    display: flex; flex-direction: column; gap: 13px;
+    transition: transform .15s ease;
+  }
+  .cell:hover { transform: translateY(-3px); }
+  .cell__chip {
+    align-self: center; white-space: nowrap;
+    font-size: 11.5px; color: var(--muted);
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 999px; padding: 4px 13px;
+  }
+  /* 玻璃拟态必须有彩色底才看得出模糊 */
+  .cell--s06 {
+    padding: 14px; border-radius: 18px;
+    background: linear-gradient(135deg, #7c5cff, #00c2ff 48%, #ff5ea8);
+  }
+  .cell--s06 .cell__chip { background: #fff; border-color: transparent; }
+
+  /* ---------- Tooltip 基座 ---------- */
+  .tip {
+    position: relative; width: 100%;
+    background: var(--bg); color: var(--fg);
+    font-size: 12.5px; line-height: 1.6;
+  }
+  .tip::after {
+    content: ""; position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent; border-top-color: var(--bg);
+  }
+
+  /* ================= 01 极简深色 ================= */
+  .s01 {
+    --bg: #1f2430; --fg: #e9edf7; --sub: rgba(233, 237, 247, .62);
+    --soft: rgba(255, 255, 255, .09); --line: rgba(255, 255, 255, .14);
+    --accent: #8f9cff; --on-accent: #fff;
+    --kbd-bg: #2b3346; --kbd-bd: #3d485f; --kbd-fg: #e9edf7;
+    padding: 12px 14px; border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(12, 18, 32, .26);
+  }
+
+  /* ================= 02 浅色卡片 ================= */
+  .s02 {
+    --bg: #fff; --fg: #1b2333; --sub: #6b7690;
+    --soft: #f2f5fb; --line: rgba(20, 28, 45, .11);
+    --accent: #4c5fff; --on-accent: #fff;
+    --kbd-bg: #eef1f8; --kbd-bd: #d9dfec; --kbd-fg: #26303f;
+    padding: 14px 16px; border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(20, 28, 45, .13);
+  }
+
+  /* ================= 03 大投影浮层 ================= */
+  .s03 {
+    --bg: #fff; --fg: #1b2333; --sub: #6b7690;
+    --soft: #f4f6fc; --line: rgba(20, 28, 45, .1);
+    --accent: #7c5cff; --on-accent: #fff;
+    --kbd-bg: #f1f3fb; --kbd-bd: #dde2f1; --kbd-fg: #26303f;
+    padding: 16px 18px; border-radius: 20px;
+    box-shadow: 0 26px 64px rgba(20, 28, 45, .28),
+                0 0 0 1px rgba(124, 92, 255, .2),
+                0 0 26px rgba(124, 92, 255, .14);
+  }
+
+  /* ================= 04 深色柔光 ================= */
+  .s04 {
+    --bg: #111827; --fg: #e8ecf6; --sub: rgba(232, 236, 246, .6);
+    --soft: rgba(255, 255, 255, .08); --line: rgba(255, 255, 255, .14);
+    --accent: #93a0ff; --on-accent: #fff;
+    --kbd-bg: #232c40; --kbd-bd: #354061; --kbd-fg: #e8ecf6;
+    padding: 14px 16px; border-radius: 18px;
+    box-shadow: 0 0 0 1px rgba(147, 160, 255, .16),
+                0 16px 40px rgba(9, 14, 26, .4),
+                0 0 34px rgba(76, 95, 255, .16);
+  }
+
+  /* ================= 05 左侧色条 ================= */
+  .s05 {
+    --bg: #fff; --fg: #1b2333; --sub: #6b7690;
+    --soft: #f2f5fb; --line: rgba(20, 28, 45, .1);
+    --accent: #4c5fff; --on-accent: #fff;
+    --kbd-bg: #eef1f8; --kbd-bd: #d9dfec; --kbd-fg: #26303f;
+    padding: 14px 16px 14px 19px; border-radius: 10px;
+    border-left: 3px solid #4c5fff;
+    box-shadow: 0 8px 22px rgba(20, 28, 45, .1);
+  }
+
+  /* ================= 06 玻璃拟态 ================= */
+  .s06 {
+    --bg: rgba(255, 255, 255, .52); --fg: #101828; --sub: rgba(16, 24, 40, .66);
+    --soft: rgba(255, 255, 255, .5); --line: rgba(16, 24, 40, .14);
+    --accent: #4c5fff; --on-accent: #fff;
+    --kbd-bg: rgba(255, 255, 255, .65); --kbd-bd: rgba(16, 24, 40, .18); --kbd-fg: #101828;
+    padding: 15px 16px; border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, .62);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    backdrop-filter: blur(14px) saturate(180%);
+    box-shadow: 0 14px 34px rgba(24, 20, 60, .28);
+  }
+
+  /* ================= 07 顶部渐变条 ================= */
+  .s07 {
+    --bg: #fff; --fg: #1b2333; --sub: #6b7690;
+    --soft: #f4f6fc; --line: rgba(20, 28, 45, .1);
+    --accent: #6b7cff; --on-accent: #fff;
+    --kbd-bg: #eef1f8; --kbd-bd: #d9dfec; --kbd-fg: #26303f;
+    padding: 18px 18px 15px; border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(20, 28, 45, .15);
+  }
+  .s07::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px;
+    border-radius: 14px 14px 0 0;
+    background: linear-gradient(90deg, #6b7cff, #a855f7, #ff5ea8);
+  }
+
+  /* ================= 08 顶部高亮线 ================= */
+  .s08 {
+    --bg: #1b2130; --fg: #e8ecf6; --sub: rgba(232, 236, 246, .62);
+    --soft: rgba(255, 255, 255, .08); --line: rgba(255, 255, 255, .13);
+    --accent: #00e5ff; --on-accent: #062026;
+    --kbd-bg: #2b3346; --kbd-bd: #3d485f; --kbd-fg: #e8ecf6;
+    padding: 17px 16px 15px; border-radius: 12px;
+    box-shadow: 0 14px 34px rgba(9, 14, 26, .32);
+  }
+  .s08::before {
+    content: ""; position: absolute; left: 14px; right: 14px; top: 0; height: 2px;
+    border-radius: 2px; background: linear-gradient(90deg, #00e5ff, #7c5cff);
+    box-shadow: 0 0 10px rgba(0, 229, 255, .6);
+  }
+
+  /* ================= 09 描边硬边 ================= */
+  .s09 {
+    --bg: #fff; --fg: #1b2333; --sub: #6b7690;
+    --soft: #f5f7fb; --line: rgba(27, 35, 51, .22);
+    --accent: #1b2333; --on-accent: #fff;
+    --kbd-bg: #eef1f8; --kbd-bd: #c9d1e0; --kbd-fg: #26303f;
+    padding: 14px 16px; border-radius: 6px;
+    border: 1.5px solid #1b2333;
+  }
+
+  /* ================= 10 霓虹发光 ================= */
+  .s10 {
+    --bg: #0b1020; --fg: #d8f6ff; --sub: rgba(216, 246, 255, .6);
+    --soft: rgba(0, 229, 255, .1); --line: rgba(0, 229, 255, .28);
+    --accent: #00e5ff; --on-accent: #04202a;
+    --kbd-bg: #132038; --kbd-bd: #1f3a5c; --kbd-fg: #d8f6ff;
+    padding: 15px 16px; border-radius: 12px; border: 1px solid transparent;
+    background:
+      linear-gradient(#0b1020, #0b1020) padding-box,
+      linear-gradient(120deg, #00e5ff, #7c5cff 55%, #ff4ecd) border-box;
+    box-shadow: 0 10px 30px rgba(0, 229, 255, .2), 0 0 42px rgba(124, 92, 255, .18);
+  }
+
+  /* ---------- 内容积木（全部吃外壳变量） ---------- */
+  .c-title { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .c-text { margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--sub); }
+  .c-head { display: flex; align-items: center; font-weight: 600; font-size: 13px; }
+  .c-head + .c-text { margin-top: 5px; }
+  .c-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex: none; margin-right: 7px;
+    background: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, .18);
+  }
+  .c-row { display: flex; align-items: flex-start; gap: 11px; }
+  .c-icon {
+    width: 34px; height: 34px; flex: none; border-radius: 9px;
+    display: grid; place-items: center;
+    background: var(--soft); color: var(--accent);
+  }
+  .c-icon svg { width: 17px; height: 17px; }
+  .c-chips { display: flex; flex-wrap: wrap; gap: 5px; margin: 12px 0; }
+  .c-chips span {
+    font-size: 10.5px; padding: 3px 8px; border-radius: 999px;
+    background: var(--soft); color: var(--sub);
+  }
+  .c-actions { display: flex; gap: 7px; }
+  .c-actions button {
+    flex: 1; font-family: inherit; font-size: 11.5px; padding: 7px 8px;
+    border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--line); background: transparent; color: var(--fg);
+  }
+  .c-actions button.primary {
+    background: var(--accent); border-color: var(--accent); color: var(--on-accent);
+  }
+  .c-label { display: block; font-size: 11px; color: var(--sub); }
+  .c-metric { font-size: 25px; font-weight: 600; line-height: 1.15; margin: 2px 0 11px; }
+  .c-up { font-size: 11.5px; font-weight: 600; color: #16a34a; margin-left: 5px; }
+  .c-bars { display: flex; align-items: flex-end; gap: 5px; height: 42px; }
+  .c-bars i { flex: 1; display: block; border-radius: 3px 3px 2px 2px; background: var(--accent); opacity: .8; }
+  .c-bars i:last-child { opacity: 1; }
+  .c-hint { margin: 8px 0 0; font-size: 11px; color: var(--sub); }
+  .c-keys { list-style: none; margin: 11px 0 0; padding: 0; display: grid; gap: 8px; }
+  .c-keys li {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; font-size: 12px; color: var(--sub);
+  }
+  .c-keys .k { display: flex; gap: 4px; flex: none; }
+  kbd {
+    font: 600 10.5px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+    padding: 4px 5px; border-radius: 5px;
+    background: var(--kbd-bg); border: 1px solid var(--kbd-bd);
+    border-bottom-width: 2px; color: var(--kbd-fg);
+  }
+  .c-user { display: flex; align-items: center; gap: 10px; }
+  .c-avatar {
+    width: 38px; height: 38px; flex: none; border-radius: 50%;
+    display: grid; place-items: center; font-weight: 600; font-size: 14px;
+    background: linear-gradient(135deg, #6b7cff, #a855f7); color: #fff;
+  }
+  .c-user b { display: block; font-size: 13px; }
+  .c-sub { font-size: 11px; color: var(--sub); }
+  .c-user + .c-text { margin-top: 10px; }
+  .c-stats { display: flex; gap: 7px; margin: 12px 0; }
+  .c-stats > div { flex: 1; text-align: center; padding: 7px 5px; border-radius: 9px; background: var(--soft); }
+  .c-stats b { display: block; font-size: 13.5px; }
+  .c-stats span { font-size: 10.5px; color: var(--sub); }
+  .c-steps { list-style: none; margin: 11px 0 0; padding: 0; display: grid; gap: 9px; }
+  .c-steps li { display: flex; align-items: flex-start; gap: 9px; font-size: 12px; color: var(--sub); }
+  .c-steps i {
+    flex: none; width: 19px; height: 19px; border-radius: 50%;
+    background: var(--soft); color: var(--accent);
+    font: 600 10.5px/19px ui-monospace, monospace; text-align: center; font-style: normal;
+  }
+
+  /* ---------- 页脚 ---------- */
+  .page-foot {
+    margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.95;
+  }
+  .page-foot b { color: var(--text); }
+
+  @media (prefers-reduced-motion: reduce) { .cell { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page-head">
+    <div>
+      <h1>10 种 Tooltip 风格 × 8 种内容</h1>
+      <p>横向滚动查看全部内容列 · 每行一种风格，每列一种内容</p>
+    </div>
+    <button class="theme-btn" type="button" id="themeBtn">切换深色底</button>
+  </header>
+
+  <div class="notes">
+    <b>文案合并：</b>原「自动保存已开启」+ 原「AI 补全已启用」→ 合并为 <code>功能开关</code>；原「快捷指令 ⌘K」+ 原「快捷键列表」→ 合并为 <code>快捷键</code>。10 段 → 8 段。<br />
+    <b>风格抽象：</b>为了让每种风格都能承载全部内容，10 种风格已统一抽象成「视觉外壳」。原本靠内容区分的数据卡、用户名片、快捷键，改用外壳特征来区分（左侧色条 / 顶部渐变条 / 顶部高亮线）。<br />
+    <b>看什么：</b>同一行 = 一种风格在不同内容下的表现（够不够稳）；同一列 = 同一内容在不同风格下的表现（谁更好看）。
+  </div>
+
+  <div class="scroll-hint">← 左右滚动 · 共 8 列内容 →</div>
+
+  <div class="matrix" id="matrix"></div>
+
+  <footer class="page-foot">
+    <b>下一步：</b>回复「风格编号」（如 <b>03</b> 或 <b>03 + 08</b>），我把选中的外壳做成可复用组件，并把定位逻辑（边缘翻转、防溢出）一次性写对。<br />
+    <b>也可以说：</b>「03 的外壳 + 08 的顶部高亮线」这类组合，我按你说的拼。
+  </footer>
+
+</div>
+
+<script>
+  /* ============ 内容积木（8 段） ============ */
+  var CONTENTS = [
+    {
+      label: '短句',
+      html: '复制链接到剪贴板'
+    },
+    {
+      label: '功能开关',
+      html: '<span class="c-title">自动保存已开启</span>' +
+            '<p class="c-text">你的编辑内容每 30 秒保存一次，可在「设置 → 存储」中关闭。</p>'
+    },
+    {
+      label: '带图标说明',
+      html: '<div class="c-row">' +
+              '<span class="c-icon">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                  '<path d="M12 3l7 3.5v5c0 4.2-2.9 7.9-7 9.5-4.1-1.6-7-5.3-7-9.5v-5L12 3z"/>' +
+                  '<path d="M9.5 12.2l1.8 1.8 3.4-3.6"/>' +
+                '</svg>' +
+              '</span>' +
+              '<div>' +
+                '<span class="c-title">端到端加密</span>' +
+                '<p class="c-text">消息在离开设备前完成加密，服务器无法读取内容，密钥仅保存在你的本机。</p>' +
+              '</div>' +
+            '</div>'
+    },
+    {
+      label: '状态 + 标签 + 操作',
+      html: '<div class="c-head"><i class="c-dot"></i>生产环境 · 运行中</div>' +
+            '<p class="c-text">该分支已合并至 main，最近一次部署完成于 2 小时前。</p>' +
+            '<div class="c-chips"><span>v2.4.1</span><span>Node 20</span><span>3 个待审 PR</span></div>' +
+            '<div class="c-actions"><button class="primary" type="button">查看日志</button><button type="button">重新部署</button></div>'
+    },
+    {
+      label: '数据指标',
+      html: '<span class="c-label">近 7 日活跃</span>' +
+            '<div class="c-metric">12,480 <span class="c-up">+18.2%</span></div>' +
+            '<div class="c-bars">' +
+              '<i style="height:38%"></i><i style="height:52%"></i><i style="height:46%"></i>' +
+              '<i style="height:68%"></i><i style="height:60%"></i><i style="height:82%"></i>' +
+              '<i style="height:100%"></i>' +
+            '</div>' +
+            '<p class="c-hint">对比上一周期 10,558</p>'
+    },
+    {
+      label: '快捷键',
+      html: '<span class="c-title">常用快捷键</span>' +
+            '<ul class="c-keys">' +
+              '<li><span>保存文件</span><span class="k"><kbd>Ctrl</kbd><kbd>S</kbd></span></li>' +
+              '<li><span>命令面板</span><span class="k"><kbd>Ctrl</kbd><kbd>K</kbd></span></li>' +
+              '<li><span>全局搜索</span><span class="k"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>F</kbd></span></li>' +
+              '<li><span>关闭标签</span><span class="k"><kbd>Ctrl</kbd><kbd>W</kbd></span></li>' +
+            '</ul>'
+    },
+    {
+      label: '用户名片',
+      html: '<div class="c-user">' +
+              '<span class="c-avatar">林</span>' +
+              '<div><b>林知远</b><span class="c-sub">产品设计师 · 上海</span></div>' +
+            '</div>' +
+            '<p class="c-text">负责编辑器与协作模块，本月完成 3 次版本评审。</p>' +
+            '<div class="c-stats">' +
+              '<div><b>128</b><span>文档</span></div>' +
+              '<div><b>36</b><span>评论</span></div>' +
+              '<div><b>4.9</b><span>评分</span></div>' +
+            '</div>' +
+            '<div class="c-actions"><button class="primary" type="button">关注</button><button type="button">发消息</button></div>'
+    },
+    {
+      label: '流程步骤',
+      html: '<span class="c-title">发布流程（约 6 分钟）</span>' +
+            '<ol class="c-steps">' +
+              '<li><i>1</i><span>运行测试套件，确认全部通过</span></li>' +
+              '<li><i>2</i><span>自动生成变更日志并核对条目</span></li>' +
+              '<li><i>3</i><span>推送标签，触发构建与灰度发布</span></li>' +
+            '</ol>'
+    }
+  ];
+
+  /* ============ 风格外壳（10 种） ============ */
+  var STYLES = [
+    { cls: 's01', num: '01', name: '极简深色',   desc: '深底 · 小圆角 · 紧凑' },
+    { cls: 's02', num: '02', name: '浅色卡片',   desc: '白底 · 柔和投影' },
+    { cls: 's03', num: '03', name: '大投影浮层', desc: '白底 · 大圆角 · 超大投影（原「富信息卡」外壳）' },
+    { cls: 's04', num: '04', name: '深色柔光',   desc: '深底 · 蓝色柔光晕（原「图标提示」外壳）' },
+    { cls: 's05', num: '05', name: '左侧色条',   desc: '白底 · 左侧 3px 蓝条（原「数据卡」外壳）' },
+    { cls: 's06', num: '06', name: '玻璃拟态',   desc: '半透明 · 背景模糊' },
+    { cls: 's07', num: '07', name: '顶部渐变条', desc: '白底 · 顶部 4px 渐变（原「用户名片」外壳）' },
+    { cls: 's08', num: '08', name: '顶部高亮线', desc: '深底 · 顶部发光细线（原「快捷键」外壳）' },
+    { cls: 's09', num: '09', name: '描边硬边',   desc: '白底 · 1.5px 描边 · 无投影（原「步骤清单」外壳）' },
+    { cls: 's10', num: '10', name: '霓虹发光',   desc: '深底 · 渐变描边 + 外发光' }
+  ];
+
+  /* ============ 渲染矩阵 ============ */
+  var html = STYLES.map(function (s) {
+    var cells = CONTENTS.map(function (c) {
+      return '<div class="cell cell--' + s.cls + '">' +
+               '<div class="tip ' + s.cls + '">' + c.html + '</div>' +
+               '<div class="cell__chip">' + c.label + '</div>' +
+             '</div>';
+    }).join('');
+
+    return '<div class="row">' +
+             '<div class="row__label">' +
+               '<span class="row__num">' + s.num + '</span>' +
+               '<span class="row__name">' + s.name + '</span>' +
+               '<span class="row__desc">' + s.desc + '</span>' +
+             '</div>' +
+             cells +
+           '</div>';
+  }).join('');
+
+  document.getElementById('matrix').innerHTML = html;
+
+  /* ============ 深浅底切换 ============ */
+  (function () {
+    var btn = document.getElementById('themeBtn');
+    var KEY = 'tooltip-matrix-theme';
+    function apply(dark) {
+      document.body.classList.toggle('dark', dark);
+      btn.textContent = dark ? '切换浅色底' : '切换深色底';
+    }
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    apply(saved === 'dark');
+
+    btn.addEventListener('click', function () {
+      var dark = !document.body.classList.contains('dark');
+      apply(dark);
+      try { localStorage.setItem(KEY, dark ? 'dark' : 'light'); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>10 种 Tooltip 样式 · 选型稿</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --bg: #eef1f7;
+    --card: #ffffff;
+    --text: #1b2333;
+    --muted: #6b7690;
+    --line: rgba(27, 35, 51, .09);
+    --stage: #f8fafd;
+    --accent: #4c5fff;
+  }
+  body.dark {
+    --bg: #0d1017;
+    --card: #151a24;
+    --text: #e6eaf3;
+    --muted: #8b95ab;
+    --line: rgba(255, 255, 255, .1);
+    --stage: #1a1f2a;
+    --accent: #8f9cff;
+  }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.6 -apple-system, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+    padding: 32px 24px 72px;
+    transition: background .25s ease, color .25s ease;
+  }
+
+  .wrap { max-width: 1260px; margin: 0 auto; }
+
+  /* ---------- 页头 ---------- */
+  .page-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; margin-bottom: 26px;
+  }
+  .page-head h1 { margin: 0 0 6px; font-size: 22px; letter-spacing: -.01em; }
+  .page-head p { margin: 0; color: var(--muted); font-size: 13px; }
+  .theme-btn {
+    border: 1px solid var(--line); background: var(--card); color: var(--text);
+    padding: 9px 15px; border-radius: 10px; font-size: 13px; cursor: pointer;
+    transition: border-color .18s ease;
+  }
+  .theme-btn:hover { border-color: var(--accent); }
+
+  /* ---------- 卡片网格 ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(382px, 1fr));
+    gap: 22px;
+  }
+  .demo {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .demo__head { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px 12px; }
+  .demo__idx {
+    font: 600 12px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+    color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 6px 7px;
+  }
+  .demo__title { margin: 0; font-size: 15px; }
+  .demo__desc { margin: 3px 0 0; font-size: 12.5px; color: var(--muted); }
+  .demo__stage {
+    position: relative; min-height: 320px; padding: 24px;
+    display: flex; align-items: flex-end; justify-content: center;
+    background: var(--stage);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .demo__stage--vivid {
+    background: linear-gradient(135deg, #7c5cff 0%, #00c2ff 48%, #ff5ea8 100%);
+    border-color: transparent;
+  }
+  .demo__foot { margin: 0; padding: 13px 18px 16px; font-size: 12.5px; color: var(--muted); }
+  .demo__foot b { color: var(--text); font-weight: 600; }
+
+  /* ---------- 触发元素 ---------- */
+  .trigger {
+    border: 1px solid var(--line); background: var(--card); color: var(--text);
+    padding: 10px 18px; border-radius: 10px; font-size: 13.5px; cursor: help;
+    box-shadow: 0 1px 2px rgba(20, 28, 45, .06);
+    transition: border-color .18s ease;
+  }
+  .demo__stage:hover .trigger { border-color: var(--accent); }
+  .trigger--text {
+    background: none; border: none; box-shadow: none; padding: 4px 2px;
+    border-bottom: 1px dashed currentColor; border-radius: 0; opacity: .85;
+  }
+  .trigger--icon { width: 42px; height: 42px; padding: 0; display: grid; place-items: center; }
+  .trigger--icon svg { width: 19px; height: 19px; }
+  .trigger--avatar {
+    width: 46px; height: 46px; padding: 0; border: none; border-radius: 50%;
+    background: linear-gradient(135deg, #6b7cff, #a855f7); color: #fff;
+    font-weight: 600; font-size: 15px;
+  }
+
+  /* ---------- Tooltip 基座 ---------- */
+  .tip {
+    position: absolute; left: 50%; bottom: 74px;
+    transform: translate(-50%, 8px);
+    opacity: 0; visibility: hidden;
+    transition: opacity .18s ease, transform .18s ease, visibility .18s;
+    pointer-events: none;
+    z-index: 5;
+    text-align: left;
+  }
+  .demo__stage:hover .tip,
+  .demo__stage:focus-within .tip {
+    opacity: 1; visibility: visible; transform: translate(-50%, 0);
+  }
+  .tip::after {
+    content: ""; position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+  }
+  /* 内部通用排版：颜色一律继承 + 透明度，保证浅色/深色 tooltip 都好看 */
+  .tip__title { display: block; font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+  .tip__text { margin: 0; font-size: 12.5px; line-height: 1.65; opacity: .74; }
+  .tip__label { display: block; font-size: 11.5px; opacity: .6; }
+
+  /* ---------- 01 极简深色 ---------- */
+  .tip--dark {
+    background: #1f2430; color: #e9edf7;
+    padding: 8px 13px; border-radius: 8px; white-space: nowrap; font-size: 12.5px;
+    box-shadow: 0 10px 26px rgba(12, 18, 32, .3);
+  }
+  .tip--dark::after { border-width: 7px; border-top-color: #1f2430; }
+  body.dark .tip--dark { background: #2c3446; }
+  body.dark .tip--dark::after { border-top-color: #2c3446; }
+
+  /* ---------- 02 浅色卡片 ---------- */
+  .tip--card {
+    width: 268px; background: var(--card); color: var(--text);
+    padding: 14px 16px; border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(20, 28, 45, .18), 0 2px 6px rgba(20, 28, 45, .08);
+  }
+  .tip--card::after { border-top-color: var(--card); }
+
+  /* ---------- 03 富信息卡 ---------- */
+  .tip--rich {
+    width: 300px; background: #fff; color: #1b2333;
+    padding: 16px; border-radius: 14px;
+    box-shadow: 0 20px 48px rgba(20, 28, 45, .24);
+    pointer-events: auto;
+  }
+  .tip--rich::after { border-top-color: #fff; }
+  .tip__head { display: flex; align-items: center; font-size: 13.5px; font-weight: 600; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; flex: none; }
+  .dot--green { background: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, .16); }
+  .tip__divider { height: 1px; background: rgba(20, 28, 45, .09); margin: 13px -16px 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 11px 0 13px; }
+  .chips span {
+    font-size: 11px; padding: 3px 8px; border-radius: 999px;
+    background: #eef1fa; color: #4a5670;
+  }
+  .tip__actions { display: flex; gap: 8px; }
+  .tip__actions button {
+    flex: 1; font-size: 12px; padding: 8px 10px; border-radius: 8px; cursor: pointer;
+    border: 1px solid rgba(20, 28, 45, .13); background: #fff; color: #26303f;
+  }
+  .tip__actions button.primary { background: #4c5fff; border-color: #4c5fff; color: #fff; }
+  .tip__actions button:hover { filter: brightness(.96); }
+
+  /* ---------- 04 图标提示 ---------- */
+  .tip--icon {
+    width: 282px; display: flex; gap: 12px; align-items: flex-start;
+    background: #111827; color: #e8ecf6;
+    padding: 14px; border-radius: 14px;
+    box-shadow: 0 18px 44px rgba(9, 14, 26, .34);
+  }
+  .tip--icon::after { border-top-color: #111827; }
+  .tip__icon {
+    width: 36px; height: 36px; flex: none; border-radius: 10px;
+    display: grid; place-items: center;
+    background: rgba(76, 95, 255, .2); color: #93a0ff;
+  }
+  .tip__icon svg { width: 18px; height: 18px; }
+
+  /* ---------- 05 数据统计 ---------- */
+  .tip--data {
+    width: 298px; background: #fff; color: #1b2333;
+    padding: 16px; border-radius: 16px;
+    box-shadow: 0 20px 48px rgba(20, 28, 45, .2);
+  }
+  .tip--data::after { border-top-color: #fff; }
+  .tip__metric { font-size: 26px; font-weight: 600; line-height: 1.2; margin: 3px 0 11px; }
+  .tip__metric .up { font-size: 12px; font-weight: 600; color: #16a34a; margin-left: 6px; }
+  .bars { display: flex; align-items: flex-end; gap: 6px; height: 46px; }
+  .bars i {
+    flex: 1; display: block; border-radius: 4px 4px 2px 2px;
+    background: linear-gradient(180deg, #7b8aff, #4c5fff);
+  }
+  .bars i:last-child { background: linear-gradient(180deg, #34d17f, #16a34a); }
+  .tip__hint { margin: 9px 0 0; font-size: 11.5px; opacity: .6; }
+
+  /* ---------- 06 玻璃拟态 ---------- */
+  .tip--glass {
+    width: 274px; padding: 15px 16px; border-radius: 16px;
+    background: rgba(255, 255, 255, .52);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, .62);
+    box-shadow: 0 16px 40px rgba(24, 20, 60, .3);
+    color: #101828;
+  }
+  .tip--glass::after { border-top-color: rgba(255, 255, 255, .55); }
+
+  /* ---------- 07 用户名片 ---------- */
+  .tip--user {
+    width: 290px; background: #fff; color: #1b2333;
+    padding: 16px; border-radius: 16px;
+    box-shadow: 0 22px 52px rgba(20, 28, 45, .24);
+    pointer-events: auto;
+  }
+  .tip--user::after { border-top-color: #fff; }
+  .tip__user { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%; flex: none;
+    display: grid; place-items: center; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, #6b7cff, #a855f7); color: #fff;
+  }
+  .tip__user b { display: block; font-size: 13.5px; }
+  .tip__user span { font-size: 11.5px; opacity: .62; }
+  .tip__stats { display: flex; gap: 8px; margin: 13px 0; }
+  .tip__stats > div {
+    flex: 1; text-align: center; padding: 8px 6px;
+    background: #f4f6fc; border-radius: 10px;
+  }
+  .tip__stats b { display: block; font-size: 14px; }
+  .tip__stats span { font-size: 11px; opacity: .62; }
+
+  /* ---------- 08 快捷键 ---------- */
+  .tip--keys {
+    width: 272px; background: #1b2130; color: #e8ecf6;
+    padding: 15px 16px; border-radius: 12px;
+    box-shadow: 0 18px 44px rgba(9, 14, 26, .34);
+  }
+  .tip--keys::after { border-top-color: #1b2130; }
+  .keys { list-style: none; margin: 11px 0 0; padding: 0; display: grid; gap: 9px; }
+  .keys li {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; font-size: 12.5px; opacity: .78;
+  }
+  .keys .k { display: flex; gap: 4px; flex: none; }
+  kbd {
+    font: 600 11px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+    padding: 4px 6px; border-radius: 5px; color: #e8ecf6;
+    background: #2b3346; border: 1px solid #3a445c; border-bottom-width: 2px;
+  }
+
+  /* ---------- 09 步骤清单 ---------- */
+  .tip--steps {
+    width: 282px; background: #fff; color: #1b2333;
+    padding: 16px; border-radius: 14px;
+    box-shadow: 0 20px 48px rgba(20, 28, 45, .2);
+  }
+  .tip--steps::after { border-top-color: #fff; }
+  .steps { list-style: none; margin: 11px 0 0; padding: 0; display: grid; gap: 10px; }
+  .steps li { display: flex; align-items: flex-start; gap: 10px; font-size: 12.5px; opacity: .78; }
+  .steps i {
+    flex: none; width: 20px; height: 20px; border-radius: 50%;
+    background: #eef1fa; color: #4c5fff;
+    font: 600 11px/20px ui-monospace, monospace; text-align: center; font-style: normal;
+  }
+
+  /* ---------- 10 霓虹发光 ---------- */
+  .tip--neon {
+    width: 288px; padding: 15px 16px; border-radius: 12px; color: #d8f6ff;
+    border: 1px solid transparent;
+    background:
+      linear-gradient(#0b1020, #0b1020) padding-box,
+      linear-gradient(120deg, #00e5ff, #7c5cff 55%, #ff4ecd) border-box;
+    box-shadow:
+      0 10px 30px rgba(0, 229, 255, .22),
+      0 0 44px rgba(124, 92, 255, .2);
+  }
+  .tip--neon::after { border-top-color: #0b1020; }
+  .tip--neon .tip__title { color: #fff; }
+  .neon-bar {
+    height: 3px; border-radius: 3px; margin-top: 13px;
+    background: linear-gradient(90deg, #00e5ff, #7c5cff, #ff4ecd);
+    box-shadow: 0 0 12px rgba(0, 229, 255, .6);
+  }
+
+  /* ---------- 页脚 ---------- */
+  .page-foot {
+    margin-top: 34px; padding-top: 20px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.9;
+  }
+  .page-foot b { color: var(--text); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tip { transition: none; }
+  }
+  @media (max-width: 440px) {
+    .grid { grid-template-columns: 1fr; }
+    .demo__stage { min-height: 300px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page-head">
+    <div>
+      <h1>10 种 Tooltip 样式</h1>
+      <p>鼠标悬停（或键盘 Tab）到每张卡片底部的触发元素上查看效果 · 点右侧按钮可切换深/浅底色</p>
+    </div>
+    <button class="theme-btn" type="button" id="themeBtn">切换深色底</button>
+  </header>
+
+  <main class="grid">
+
+    <!-- ============ 01 极简深色 ============ -->
+    <section class="demo">
+      <div class="demo__head">
+        <span class="demo__idx">01</span>
+        <div>
+          <h2 class="demo__title">极简深色</h2>
+          <p class="demo__desc">单行文字，最克制、最通用</p>
+        </div>
+      </div>
+      <div class="demo__stage">
+        <span class="trigger trigger--text" tabindex="0" aria-describedby="t1">分享链接</span>
+        <div class="tip tip--dark" role="tooltip" id="t1">复制链接到剪贴板</div>
+      </div>
+      <p class="demo__foot"><b>适用：</b>图标按钮、工具栏、一句就能说清的解释</p>
+    </section>
+
+    <!-- ============ 02 浅色卡片 ============ -->
+    <section class="demo">
+      <div class="demo__head">
+        <span class="demo__idx">02</span>
+        <div>
+          <h2 class="demo__title">浅色卡片</h2>
+          <p class="demo__desc">标题 + 正文，不抢视觉焦点</p>
+        </div>
+      </div>
+      <div class="demo__stage">
+        <button class="trigger" type="button" aria-describedby="t2">保存设置</button>
+        <div class="tip tip--card" role="tooltip" id="t2">
+          <span class="tip__title">自动保存已开启</span>
+          <p class="tip__text">你的编辑内容每 30 秒保存一次。如需关闭，请前往「设置 → 存储 → 自动保存」。</p>
+        </div>
+      </div>
+      <p class="demo__foot"><b>适用：</b>表单说明、设置项解释、正文类提示</p>
+    </section>
+
+    <!-- ============ 03 富信息卡 ============ -->
+    <section class="demo">
+      <div class="demo__head">
+        <span class="demo__idx">03</span>
+        <div>
+          <h2 class="demo__title">富信息卡</h2>
+          <p class="demo__desc">状态 + 标签 + 操作按钮</p>
+        </div>
+      </div>
+      <div class="demo__stage">
+        <button class="trigger" type="button" aria-describedby="t3">生产环境</button>
+        <div class="tip tip--rich" role="tooltip" id="t3">
+          <div class="tip__head"><span class="dot dot--green"></span>生产环境 · 运行中</div>
+          <p class="tip__text">该分支已合并至 main，最近一次部署完成于 2 小时前，当前无异常告警。</p>
+          <div class="chips">
+            <span>v2.4.1</span><span>Node 20</span><span>3 个待审 PR</span>
+          </div>
+          <div class="tip__divider"></div>
+          <div class="tip__actions">
+            <button class="primary" type="button">查看日志</button>
+            <button type="button">重新部署</button>
+          </div>
+        </div>
+      </div>
+      <p class="demo__foot"><b>适用：</b>运维/后台系统，需要直接在提示里操作</p>
+    </section>
+
+    <!-- ============ 04 图标提示 ============ -->
+    <section class="demo">
+      <div class="demo__head">
+        <span class="demo__idx">04</span>
+        <div>
+          <h2 class="demo__title">图标提示</h2>
+          <p class="demo__desc">彩色图标 + 标题 + 说明</p>
+        </div>
+      </div>
+      <div class="demo__stage">
+        <button class="trigger trigger--icon" type="button" aria-describedby="t4" aria-label="加密说明">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/>
+            <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>
+          </svg>
+        </button>
+        <div class="tip tip--icon" role="tooltip" id="t4">
+          <div class="tip__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 3l7 3.5v5c0 4.2-2.9 7.9-7 9.5-4.1-1.6-7-5.3-7-9.5v-5L12 3z"/>
+              <path d="M9.5 12.2l1.8 1.8 3.4-3.6"/>
+            </svg>
+          </div>
+          <div>
+            <span class="tip__title">端到端加密</span>
+            <p class="tip__text">消息在离开设备前完成加密，服务器无法读取内容，密钥仅保存在你的本机。</p>
+          </div>
+        </div>
+      </div>
+      <p class="demo__foot"><b>适用：</b>安全/权限说明、需要快速建立认知的功能点</p>
+    </section>
+
+    <!-- ============ 05 数据统计 ============ -->
+    <section class="demo">
+      <div class="demo__head">
+        <span class="demo__idx">05</span>
+        <div>
+          <h2 class="demo__title">数据统计</h2>
+          <p class="demo__desc">大数字 + 迷你柱状图</p>
+        </div>
+      </div>
+      <div class="demo__stage">
+        <span class="trigger trigger--text" tabindex="0" aria-describedby="t5">本周活跃用户</span>
+        <div class="tip tip--data" role="tooltip" id="t5">
+          <span class="tip__label">近 7 日活跃</span>
+          <div class="tip__metric">12,480 <span class="up">+18.2%</span></div>
+          <div class="bars">
+            <i style="height:38%"></i>
+            <i style="height:52%"></i>
+            <i style="height:46%"></i>
+            <i style="height:68%"></i>
+            <i style="height:60%"></i>
+            <i style="height:82%"></i>
+            <i style="height:100%"></i>
+          </div>
+          <p class="tip__hint">对比上一周期 10,558</p>
+        </div>
+      </div>
+      <p class="demo__foot"><b>适用：</b>数据看板、指标悬停解释、图表图例</p>
+    </section>
+
+    <!-- ============ 06 玻璃拟态 ============ -->
+    <section class="demo">
+      <div class="demo__head">
+        <span class="demo__idx">06</span>
+        <div>
+          <h2 class="demo__title">玻璃拟态</h2>
+          <p class="demo__desc">半透明 + 背景模糊</p>
+        </div>
+      </div>
+      <div class="demo__stage demo__stage--vivid">
+        <button class="trigger" type="button" aria-describedby="t6">命令面板</button>
+        <div class="tip tip--glass" role="tooltip" id="t6">
+          <span class="tip__title">快捷指令</span>
+          <p class="tip__text">按下 ⌘K 打开命令面板，可搜索文件、切换主题、运行任务，无需离开当前页面。</p>
+        </div>
+      </div>
+      <p class="demo__foot"><b>适用：</b>视觉导向的界面、图片/渐变底色上的提示</p>
+    </section>
+
+    <!-- ============ 07 用户名片 ============ -->
+    <section class="demo">
+      <div class="demo__head">
+        <span class="demo__idx">07</span>
+        <div>
+          <h2 class="demo__title">用户名片</h2>
+          <p class="demo__desc">头像 + 身份 + 数据 + 关注</p>
+        </div>
+      </div>
+      <div class="demo__stage">
+        <button class="trigger trigger--avatar" type="button" aria-describedby="t7" aria-label="林知远">林</button>
+        <div class="tip tip--user" role="tooltip" id="t7">
+          <div class="tip__user">
+            <div class="avatar">林</div>
+            <div>
+              <b>林知远</b>
+              <span>产品设计师 · 上海</span>
+            </div>
+          </div>
+          <p class="tip__text" style="margin-top:10px">负责编辑器与协作模块，最近更新了 12 个组件，本月完成 3 次版本评审。</p>
+          <div class="tip__stats">
+            <div><b>128</b><span>文档</span></div>
+            <div><b>36</b><span>评论</span></div>
+            <div><b>4.9</b><span>评分</span></div>
+          </div>
+          <div class="tip__actions">
+            <button class="primary" type="button">关注</button>
+            <button type="button">发消息</button>
+          </div>
+        </div>
+      </div>
+      <p class="demo__foot"><b>适用：</b>协作工具、社区、@提及悬停</p>
+    </section>
+
+    <!-- ============ 08 快捷键 ============ -->
+    <section class="demo">
+      <div class="demo__head">
+        <span class="demo__idx">08</span>
+        <div>
+          <h2 class="demo__title">快捷键提示</h2>
+          <p class="demo__desc">按键组 + 对应动作</p>
+        </div>
+      </div>
+      <div class="demo__stage">
+        <button class="trigger" type="button" aria-describedby="t8">编辑器快捷键</button>
+        <div class="tip tip--keys" role="tooltip" id="t8">
+          <span class="tip__title">常用快捷键</span>
+          <ul class="keys">
+            <li><span>保存文件</span><span class="k"><kbd>Ctrl</kbd><kbd>S</kbd></span></li>
+            <li><span>命令面板</span><span class="k"><kbd>Ctrl</kbd><kbd>K</kbd></span></li>
+            <li><span>全局搜索</span><span class="k"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>F</kbd></span></li>
+            <li><span>关闭当前标签</span><span class="k"><kbd>Ctrl</kbd><kbd>W</kbd></span></li>
+          </ul>
+        </div>
+      </div>
+      <p class="demo__foot"><b>适用：</b>编辑器、效率工具、工具栏按钮的快捷方式说明</p>
+    </section>
+
+    <!-- ============ 09 步骤清单 ============ -->
+    <section class="demo">
+      <div class="demo__head">
+        <span class="demo__idx">09</span>
+        <div>
+          <h2 class="demo__title">步骤清单</h2>
+          <p class="demo__desc">带序号的流程说明</p>
+        </div>
+      </div>
+      <div class="demo__stage">
+        <button class="trigger" type="button" aria-describedby="t9">发布新版本</button>
+        <div class="tip tip--steps" role="tooltip" id="t9">
+          <span class="tip__title">发布流程（约 6 分钟）</span>
+          <ol class="steps">
+            <li><i>1</i><span>运行测试套件，确认全部通过</span></li>
+            <li><i>2</i><span>自动生成变更日志并核对条目</span></li>
+            <li><i>3</i><span>推送标签，触发构建与灰度发布</span></li>
+          </ol>
+        </div>
+      </div>
+      <p class="demo__foot"><b>适用：</b>引导流程、操作前预览、付费/权限前置说明</p>
+    </section>
+
+    <!-- ============ 10 霓虹发光 ============ -->
+    <section class="demo">
+      <div class="demo__head">
+        <span class="demo__idx">10</span>
+        <div>
+          <h2 class="demo__title">霓虹发光</h2>
+          <p class="demo__desc">渐变描边 + 外发光</p>
+        </div>
+      </div>
+      <div class="demo__stage">
+        <button class="trigger" type="button" aria-describedby="t10">AI 补全</button>
+        <div class="tip tip--neon" role="tooltip" id="t10">
+          <span class="tip__title">AI 补全已启用</span>
+          <p class="tip__text">基于当前上下文实时给出建议：按 Tab 采纳，按 Esc 忽略，按 Ctrl+→ 逐词接受。</p>
+          <div class="neon-bar"></div>
+        </div>
+      </div>
+      <p class="demo__foot"><b>适用：</b>AI/游戏/开发者工具，需要强视觉记忆点</p>
+    </section>
+
+  </main>
+
+  <footer class="page-foot">
+    <b>选型提示：</b>把鼠标停在触发元素上即可预览，移开就消失；键盘 Tab 也能触发。<br />
+    <b>深色底检查：</b>点右上角按钮切换页面底色，看浅色 tooltip 在深色底上是否依然清晰（反之亦然）。<br />
+    <b>告诉我要哪一个：</b>回复编号即可（如「03」或「07 + 08」），我再帮你做成可直接用的组件代码。
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('themeBtn');
+    var KEY = 'tooltip-demo-theme';
+    function apply(dark) {
+      document.body.classList.toggle('dark', dark);
+      btn.textContent = dark ? '切换浅色底' : '切换深色底';
+    }
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    apply(saved === 'dark');
+
+    btn.addEventListener('click', function () {
+      var dark = !document.body.classList.contains('dark');
+      apply(dark);
+      try { localStorage.setItem(KEY, dark ? 'dark' : 'light'); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>
