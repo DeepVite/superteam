@@ -1,10 +1,10 @@
-# Superteam — Personal AI Agent Skill Library
+# Superteam
 
 [中文](README.md) | [English](README.en.md)
 
-This repository is a curated, **whitelist-published** subset of my personal skill library (superteam), containing AI Agent skills that are reusable across teams and devices. Each skill directory has a `SKILL.md` entry file and can be loaded by tools that follow the Agent Skills convention, such as Claude Code, Codex, and ZCode.
+A shared skill pack for software engineering teams driving AI transformation — covering requirements management, product design, UI/UX design, backend dev tools, frontend dev tools, testing tools, and more.
 
-> Current version: **v0.1.0**, with 3 curated skills published; more skills will be released gradually as they mature.
+**3 skills** are open-sourced so far, with dozens more on the way (current version: v0.1.0). Each skill directory has a `SKILL.md` entry file and can be loaded by tools that follow the Agent Skills convention, such as Claude Code, Codex, and ZCode.
 
 ## Repository Structure
 
@@ -28,35 +28,43 @@ superteam/
 
 ## Skill Overview
 
-### dev-kit — Development
+### dev-kit — Backend / frontend dev tools
 
 | Skill | Purpose |
 |---|---|
 | backend/excel-export | Phase-by-phase development of SaaS Excel export features for backend engineers (EasyExcel/POI/JXLS), with a style template, decision tree, and testing guide |
 | front/beautiful-tooltip | Design/implement tooltips (hover hints) for UI elements: design spec + copywriting spec + visual examples |
 
-### init-agent-md-rules — Project initialization
+### init-agent-md-rules — Engineering conventions init
 
 | Skill | Purpose |
 |---|---|
 | init-agent-md-rules | On project /init or initialization, inject global user rules into `AGENTS.md` / `CLAUDE.md` (concise reply style, recycle-bin delete safety) |
 
-## Usage
+## Installation & Usage
 
-### Option 1: Install as a plugin marketplace
-
-In Claude Code, run:
+### Claude Code (plugin marketplace)
 
 ```
 /plugin marketplace add DeepVite/superteam
 /plugin install superteam-pack@superteam
 ```
 
-The repository also ships `.codex-plugin/plugin.json` for Codex plugin support.
+### Codex
 
-### Option 2: Mount the skill directory directly
+Codex CLI loads skills from `~/.codex/skills/` (global) or `.codex/skills/` (per project). Copy the whole skill directory you need into it:
 
-Copy the skill directory you need (or mount it via a directory link/junction) into your agent's skills directory, e.g. `~/.claude/skills/` or `~/.zcode/skills/` for Claude Code / ZCode:
+```bash
+git clone https://github.com/DeepVite/superteam.git
+mkdir -p ~/.codex/skills
+cp -r superteam/plugins/superteam-pack/skills/dev-kit/front/beautiful-tooltip ~/.codex/skills/
+```
+
+> Note: Codex does not discover skills whose `SKILL.md` is a symlink — copy the directory instead of linking it.
+
+### Other tools (ZCode, etc.)
+
+Copy the skill directory (or mount it via a directory link/junction) into the corresponding skills directory, e.g. `~/.zcode/skills/`:
 
 ```bash
 # Junction mount (Windows; the source directory stays the single source of truth)
