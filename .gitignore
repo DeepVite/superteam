@@ -1,10 +1,13 @@
 # ============================================================
 # 白名单模式：默认忽略全部内容，仅发布下方明确放行的技能目录。
 # 注意：git 无法放行"被忽略目录内部"的内容，因此目录链必须逐级放行。
+# 2026-09-20：发布范围缩减为 3 个技能：
+#   dev-kit/backend（整目录）、dev-kit/front（整目录）、init-agent-md-rules。
 # ============================================================
 
 /*
 !/.gitignore
+!/LICENSE
 !/README.md
 !/README.en.md
 # 注：README.full.md（全量技能清单，本地自用）由上面的 /* 默认忽略，不发布。
@@ -17,24 +20,12 @@
 !/plugins/superteam-pack/skills
 /plugins/superteam-pack/skills/*
 
-# 放行的技能（根目录级）
-!/plugins/superteam-pack/skills/codex-tools
-!/plugins/superteam-pack/skills/create-session-memory
-!/plugins/superteam-pack/skills/git-tools
-!/plugins/superteam-pack/skills/init-agent-or-claude-md-rules
-
-# 放行的技能（tencent-ecosystem-kit 整包）
-!/plugins/superteam-pack/skills/tencent-ecosystem-kit
-
-# 放行的技能（dev-kit 下，需再破一层）
+# 放行的技能（仅 3 个，整目录发布）
 !/plugins/superteam-pack/skills/dev-kit
 /plugins/superteam-pack/skills/dev-kit/*
 !/plugins/superteam-pack/skills/dev-kit/backend
-/plugins/superteam-pack/skills/dev-kit/backend/*
-!/plugins/superteam-pack/skills/dev-kit/backend/excel-export
 !/plugins/superteam-pack/skills/dev-kit/front
-/plugins/superteam-pack/skills/dev-kit/front/*
-!/plugins/superteam-pack/skills/dev-kit/front/beautiful-tooltip
+!/plugins/superteam-pack/skills/init-agent-md-rules
 
 # 放行市场定义与插件 manifest（多 Agent 插件市场发布）
 !/.claude-plugin
@@ -51,14 +42,11 @@
 !/plugins/superteam-pack/.codex-plugin
 /plugins/superteam-pack/.codex-plugin/*
 !/plugins/superteam-pack/.codex-plugin/plugin.json
-!/plugins/mattpocock-skills
-/plugins/mattpocock-skills/*
-!/plugins/mattpocock-skills/.claude-plugin
-/plugins/mattpocock-skills/.claude-plugin/*
-!/plugins/mattpocock-skills/.claude-plugin/plugin.json
-!/plugins/mattpocock-skills/.codex-plugin
-/plugins/mattpocock-skills/.codex-plugin/*
-!/plugins/mattpocock-skills/.codex-plugin/plugin.json
+
+# 以下本地保留、不发布：
+# - codex-tools / create-session-memory / git-tools / tencent-ecosystem-kit（2026-09-20 移出白名单）
+# - mattpocock-skills（第三方内容）
+# - 其余 skills 目录（钉钉 / TAPD 等公司工作流类）
 
 # 已放行目录内的通用杂物
 **/__pycache__/

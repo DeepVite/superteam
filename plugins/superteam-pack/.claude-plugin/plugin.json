@@ -1,6 +1,6 @@
 {
   "name": "superteam-pack",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "TJ's personal Claude Code toolkit: product management, design, thinking, development, media creation, and utility skills — all in one plugin.",
   "author": {
     "name": "TJ"
@@ -15,19 +15,8 @@
     "tools"
   ],
   "skills": [
-    "./skills/codex-tools/dish-excel-extractor",
-    "./skills/codex-tools/fix-codex-reconnecting",
-    "./skills/create-session-memory",
     "./skills/dev-kit/backend/excel-export",
     "./skills/dev-kit/front/beautiful-tooltip",
-    "./skills/git-tools/cnb-cli-install",
-    "./skills/git-tools/github-cli",
-    "./skills/git-tools/github-cli-install",
-    "./skills/git-tools/using-git-worktrees",
-    "./skills/init-agent-or-claude-md-rules",
-    "./skills/tencent-ecosystem-kit/tapd-cli",
-    "./skills/tencent-ecosystem-kit/tapd-cli-install",
-    "./skills/tencent-ecosystem-kit/tapd-mcp-one-click-deployment",
-    "./skills/tencent-ecosystem-kit/tapd-skill"
+    "./skills/init-agent-md-rules"
   ]
 }

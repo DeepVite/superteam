@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "superteam",
   "description": "TJ's personal coding-agent plugin marketplace — PM, design, thinking, dev, media, and utility skills",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "owner": {
     "name": "TJ"
   },
